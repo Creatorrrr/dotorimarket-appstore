@@ -1,0 +1,7 @@
+server:
+  port: 3000
+app:
+  name: 'dotorimarket'
+log:
+  path: './logs'
+  level: 'debug'

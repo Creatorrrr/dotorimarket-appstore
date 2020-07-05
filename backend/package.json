@@ -1,0 +1,25 @@
+{
+  "name": "dotorimarket-appstore-backend",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "cross-env NODE_ENV=production node ./bin/www",
+    "start-dev": "cross-env NODE_ENV=development node --inspect ./bin/www"
+  },
+  "dependencies": {
+    "cookie-parser": "^1.4.5",
+    "cross-env": "^7.0.2",
+    "express": "^4.17.1",
+    "http-errors": "^1.7.3",
+    "jsonwebtoken": "^8.5.1",
+    "moment": "^2.26.0",
+    "morgan": "^1.10.0",
+    "passport": "^0.4.1",
+    "passport-jwt": "^4.0.0",
+    "strip-color": "^0.1.0",
+    "winston": "^3.2.1",
+    "winston-daily-rotate-file": "^4.4.2",
+    "yaml": "^1.10.0",
+    "dotorimarket-appstore-frontend": "file:../frontend"
+  }
+}

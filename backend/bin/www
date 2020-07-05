@@ -1,0 +1,75 @@
+'use strict';
+
+const env = require('../utils/env/env');
+const app = require('../app');
+const http = require('http');
+const { logger } = require('../configs/logger-config');
+
+class HttpServer {
+  constructor(app, port) {
+    this.app = app;
+    this.port = port;
+  }
+
+  /**
+   * 서버 실행
+   */
+  run() {
+    const port = this.normalizePort(this.port);
+    this.app.set('port', port);
+
+    const server = http.createServer(this.app);
+
+    server.listen(port);
+    server.on('error', (error) => { this.onError(error, port) });
+    server.on('listening', () => { this.onListening(server) });
+  }
+
+  /**
+   * 포트일 경우 number, 파이프일 경우 string로 변환
+   * (그 외에는 false 처리)
+   */
+  normalizePort(val) {
+    const port = parseInt(val, 10);
+
+    if (isNaN(port)) return val;      // named pipe
+    else if (port >= 0) return port;  // port number
+    else return false;
+  }
+
+  /**
+   * HTTP 서버 error 이벤트 핸들러
+   */
+  onError(error, port) {
+    if (error.syscall !== 'listen') throw error;
+
+    const bind = typeof port === 'string' ? 'Pipe ' + port : 'Port ' + port;
+
+    // 에러 코드 별 처리
+    switch (error.code) {
+      case 'EACCES':
+        logger.error(`${bind} requires elevated privileges`);
+        process.exit(1);
+      case 'EADDRINUSE':
+        logger.error(`${bind} is already in use`);
+        process.exit(1);
+      default:
+        throw error;
+    }
+  }
+
+  /**
+   * HTTP 서버 listening 이벤트 핸들러
+   */
+  onListening(server) {
+    const addr = server.address();
+    const bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port;
+    logger.info(`Listening on ${bind}`);
+  }
+}
+
+const port = process.env.PORT || env.server.port;
+const httpServer = new HttpServer(app, port);
+
+// 서버 실행
+httpServer.run();
