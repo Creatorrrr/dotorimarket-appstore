@@ -27,8 +27,8 @@ app.use(PassportConfig.authenticateJWT);
 
 // 라우터 등록
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
-app.use('/apps', appsRouter);
+app.use('/api/users', usersRouter);
+app.use('/api/apps', appsRouter);
 
 // 라우터에 없는 경로는 404(Not Found)처리
 app.use((req, res, next) => {

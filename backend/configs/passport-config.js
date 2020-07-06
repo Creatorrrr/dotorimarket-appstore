@@ -57,9 +57,9 @@ class PassportConfig {
 }
 PassportConfig.JWT_SECRET = process.env.JWT_SECRET || 'nosecret'; // *********** SECRET 미입력 시 에러 발생하도록
 PassportConfig.IGNORE_PATHS = [                                   // *********** ANT 패턴으로 매칭
-  '/users',
-  '/apps/android',
-  '/apps/ios',
+  '/api/users',
+  '/api/apps/android',
+  '/api/apps/ios',
 ];
 
 module.exports = PassportConfig;
