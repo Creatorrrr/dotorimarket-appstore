@@ -19,7 +19,6 @@
     "strip-color": "^0.1.0",
     "winston": "^3.2.1",
     "winston-daily-rotate-file": "^4.4.2",
-    "yaml": "^1.10.0",
-    "dotorimarket-appstore-frontend": "file:../frontend"
+    "yaml": "^1.10.0"
   }
 }

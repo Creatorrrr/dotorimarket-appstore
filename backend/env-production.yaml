@@ -3,5 +3,7 @@ server:
 app:
   name: 'dotorimarket'
 log:
-  path: './logs'
+  path: '../logs'
   level: 'info'
+file:
+  path: '../files'

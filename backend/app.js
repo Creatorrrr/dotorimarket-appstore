@@ -11,6 +11,7 @@ const HttpConfig = require('./configs/http-config');
 
 const indexRouter = require('./routes/index-router');
 const usersRouter = require('./routes/user-router');
+const appsRouter = require('./routes/apps-router');
 
 const app = express();
 
@@ -27,6 +28,7 @@ app.use(PassportConfig.authenticateJWT);
 // 라우터 등록
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/apps', appsRouter);
 
 // 라우터에 없는 경로는 404(Not Found)처리
 app.use((req, res, next) => {

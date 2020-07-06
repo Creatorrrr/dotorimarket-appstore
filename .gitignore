@@ -1,13 +1,14 @@
 .DS_Store
-backend/node_modules
-frontend/node_modules
+node_modules
+/backend/public
+/files
 
 # local env files
 .env.local
 .env.*.local
 
 # Log files
-backend/logs
+logs
 *.log
 npm-debug.log*
 yarn-debug.log*
