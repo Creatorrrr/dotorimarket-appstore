@@ -9,7 +9,7 @@
         cols="12"
         sm="4"
       >
-        <a :href="'/api/apps/android'">
+        <a :href="'/api/apps/dotori-android.apk'">
           <v-img
             :src="require('../assets/images/android-logo.png')"
             class="my-3"
@@ -23,7 +23,7 @@
         cols="12"
         sm="6"
       >
-        <div v-on:click="downloadIOS">
+        <a :href="'/api/apps/dotori-ios.plist'">
           <v-img
             :src="require('../assets/images/ios-logo.png')"
             class="my-3"
@@ -31,7 +31,7 @@
             height="100"
           />
           <p class="font-weight-black text-center">iOS</p>
-        </div>
+        </a>
       </v-col>
     </v-row>
   </v-container>

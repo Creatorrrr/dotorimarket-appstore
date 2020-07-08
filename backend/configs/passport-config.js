@@ -58,8 +58,9 @@ class PassportConfig {
 PassportConfig.JWT_SECRET = process.env.JWT_SECRET || 'nosecret'; // *********** SECRET 미입력 시 에러 발생하도록
 PassportConfig.IGNORE_PATHS = [                                   // *********** ANT 패턴으로 매칭
   '/api/users',
-  '/api/apps/android',
-  '/api/apps/ios',
+  '/api/apps/dotori-android.apk',
+  '/api/apps/dotori-ios.plist',
+  '/api/apps/dotori-ios.ipa',
 ];
 
 module.exports = PassportConfig;
