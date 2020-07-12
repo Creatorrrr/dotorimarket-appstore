@@ -44,23 +44,28 @@ class PassportConfig {
    * JWT 토큰 인증 처리
    */
   static authenticateJWT(req, res, next) {
-    if (!PassportConfig.IGNORE_PATHS.includes(req.path)) {
-      passport.authenticate('jwt', { session: false }, (err, user, info) => {
-        if (err) next(err); 
-        else if (!user) next(createError(HttpConfig.UNAUTHORIZED.statusCode, HttpConfig.UNAUTHORIZED.message));
-        else next();
-      })(req, res, next);
-    } else {
+    // if (!PassportConfig.IGNORE_PATHS.includes(req.path)) {
+    //   passport.authenticate('jwt', { session: false }, (err, user, info) => {
+    //     if (err) next(err); 
+    //     else if (!user) next(createError(HttpConfig.UNAUTHORIZED.statusCode, HttpConfig.UNAUTHORIZED.message));
+    //     else next();
+    //   })(req, res, next);
+    // } else {
       next();
-    }
+    // }
   }
 }
-PassportConfig.JWT_SECRET = process.env.JWT_SECRET || 'nosecret'; // *********** SECRET 미입력 시 에러 발생하도록
-PassportConfig.IGNORE_PATHS = [                                   // *********** ANT 패턴으로 매칭
+PassportConfig.JWT_SECRET = process.env.JWT_SECRET; // ***** DB를 통해 처리하도록 개선
+PassportConfig.IGNORE_PATHS = [                     // ***** ANT 패턴으로 매칭하도록 개선
   '/api/users',
   '/api/apps/dotori-android.apk',
   '/api/apps/dotori-ios.plist',
   '/api/apps/dotori-ios.ipa',
 ];
+
+// JWT_SECRET이 초기화 안 되어 있을 경우 에러 발생
+if (!process.env.JWT_SECRET) {
+  throw new Error('JWT_SECRET is not initialized');
+}
 
 module.exports = PassportConfig;

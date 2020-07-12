@@ -3,6 +3,8 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const PassportConfig = require('../configs/passport-config');
+const account = require('../models/account');
+
 const router = express.Router();
 
 router.get('/:userId', (req, res) => {
