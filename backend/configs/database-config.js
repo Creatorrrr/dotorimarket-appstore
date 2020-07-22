@@ -19,7 +19,7 @@ class DatabaseConfig {
           logger.info('DB Connected');
         },
         onError: (err) => {
-          logger.error(err);
+          logger.error(err.stack);
         },
       });
       conns.set(db.id, conn);
