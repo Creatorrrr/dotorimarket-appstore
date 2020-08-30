@@ -10,7 +10,8 @@ services:
     volumes:
       - ~/dotorimarket/appstore/files:/app/files
     environment:
-      - JWT_SECRET: "yessecret"
+      - JWT_SECRET=yessecret
+      - DB_DEFAULT_HOST=mongodb://db:27017/dotorimarket-appstore
   db:
     image: mongo:4.2.8
     ports:
