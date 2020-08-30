@@ -12,14 +12,14 @@ const router = express.Router();
  * 계정 생성
  */
 router.post('/v1/accounts', async (req, res, next) => {
-  const account = new Account({
-    accountId: req.body.accountId,
-    password: req.body.password,
-    name: req.body.password,
-    email: req.body.email,
-  });
-
   try {
+    const account = new Account({
+      accountId: req.body.accountId,
+      password: req.body.password,
+      name: req.body.password,
+      email: req.body.email,
+    });
+
     const result = await account.save();
 
     res.json({ result });

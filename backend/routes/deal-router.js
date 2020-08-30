@@ -11,14 +11,14 @@ const router = express.Router();
  * 거래 생성
  */
 router.post('/v1/deals', async (req, res, next) => {
-  const deal = new Deal({
-    title: req.body.title,
-    categoryId: req.body.categoryId,
-    description: req.body.description,
-    type: req.body.type,
-  });
-
   try {
+    const deal = new Deal({
+      title: req.body.title,
+      categoryId: req.body.categoryId,
+      description: req.body.description,
+      type: req.body.type,
+    });
+
     const result = await deal.save();
 
     res.json({ result });
