@@ -29,7 +29,11 @@ router.post('/v1/users', async (req, res, next) => {
       payload.user = { userId: userId };                                  // 사용자 정보
       payload.token = jwt.sign(payload.user, PassportConfig.JWT_SECRET);  // 토큰
   
-      res.json(payload);
+      res.json({
+        statusCode: HttpConfig.SUCCESS.statusCode,
+        message: HttpConfig.SUCCESS.message,
+        result: payload,
+      });
     } else {
       throw createError(HttpConfig.UNAUTHORIZED.statusCode, HttpConfig.UNAUTHORIZED.message);
     }

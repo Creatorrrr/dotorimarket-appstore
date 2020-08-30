@@ -15,6 +15,7 @@ router.post('/v1/deals', async (req, res, next) => {
     const deal = new Deal({
       title: req.body.title,
       categoryId: req.body.categoryId,
+      price: req.body.price,
       description: req.body.description,
       type: req.body.type,
     });
@@ -36,6 +37,7 @@ router.patch('/v1/deals/:dealId', async (req, res, next) => {
     const deal = {
       title: req.body.title,
       categoryId: req.body.categoryId,
+      price: req.body.price,
       description: req.body.description,
       type: req.body.type,
     };
@@ -80,11 +82,16 @@ router.get('/v1/deals/:dealId', async (req, res, next) => {
       dealId: deal.dealId,
       title: deal.title,
       categoryId: deal.categoryId,
+      price: deal.price,
       description: deal.description,
       type: deal.type,
     };
 
-    res.json(payload);
+    res.json({
+      statusCode: HttpConfig.SUCCESS.statusCode,
+      message: HttpConfig.SUCCESS.message,
+      result: payload,
+    });
   } catch(err) {
     next(err);
   }
@@ -117,12 +124,17 @@ router.get('/v1/deals', async (req, res, next) => {
         dealId: deal.dealId,
         title: deal.title,
         categoryId: deal.categoryId,
+        price: deal.price,
         description: deal.description,
         type: deal.type,
       });
     }
 
-    res.json(payload);
+    res.json({
+      statusCode: HttpConfig.SUCCESS.statusCode,
+      message: HttpConfig.SUCCESS.message,
+      result: payload,
+    });
   } catch (err) {
     next(err);
   }

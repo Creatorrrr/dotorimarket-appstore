@@ -9,3 +9,11 @@ services:
       - "80:3000"
     volumes:
       - ~/dotorimarket/appstore/files:/app/files
+    environment:
+      - JWT_SECRET: "yessecret"
+  db:
+    image: mongo:4.2.8
+    ports:
+      - "27017:27017"
+    volumes:
+      - ~/dotorimarket/appstore/db:/data/db

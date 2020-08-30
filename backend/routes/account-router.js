@@ -82,7 +82,11 @@ router.get('/v1/accounts/:accountId', async (req, res, next) => {
       email: account.email,
     };
 
-    res.json(payload);
+    res.json({
+      statusCode: HttpConfig.SUCCESS.statusCode,
+      message: HttpConfig.SUCCESS.message,
+      result: payload,
+    });
   } catch(err) {
     next(err);
   }
@@ -118,7 +122,11 @@ router.get('/v1/accounts', async (req, res, next) => {
       });
     }
 
-    res.json(payload);
+    res.json({
+      statusCode: HttpConfig.SUCCESS.statusCode,
+      message: HttpConfig.SUCCESS.message,
+      result: payload,
+    });
   } catch (err) {
     next(err);
   }

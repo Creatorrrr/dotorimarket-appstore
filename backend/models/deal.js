@@ -8,7 +8,7 @@ const dealSchema = new mongoose.Schema({
   dealId:  Number,
   title: String,
   categoryId: String,
-  categoryName: String,
+  price: String,
   description: String,
   type: String,
 });
