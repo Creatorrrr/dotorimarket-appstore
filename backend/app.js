@@ -13,6 +13,7 @@ const indexRouter = require('./routes/index-router');
 const userRouter = require('./routes/user-router');
 const accountRouter = require('./routes/account-router');
 const appRouter = require('./routes/app-router');
+const dealRouter = require('./routes/deal-router');
 
 const app = express();
 
@@ -28,9 +29,11 @@ app.use(PassportConfig.authenticateJWT);
 
 // 라우터 등록
 app.use('/', indexRouter);
-app.use('/api/users', userRouter);
-app.use('/api/accounts', accountRouter);
-app.use('/api/apps', appRouter);
+app.use('/api/mobile'
+  , userRouter
+  , accountRouter
+  , appRouter
+  , dealRouter);
 
 // 라우터에 없는 경로는 404(Not Found)처리
 app.use((req, res, next) => {

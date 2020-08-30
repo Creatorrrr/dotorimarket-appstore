@@ -1,6 +1,7 @@
 'use strict';
 
 const mongoose = require('mongoose');
+const autoIncrement = require('mongoose-auto-increment');
 
 /**
  * DB 팩토리
@@ -27,6 +28,9 @@ class DatabaseFactory {
       });
     }
     conn.catch(options.onError);
+
+    autoIncrement.initialize(conn);
+
     return conn;
   }
 }
