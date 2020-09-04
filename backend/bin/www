@@ -3,12 +3,14 @@
 const env = require('../utils/env/env');
 const app = require('../app');
 const http = require('http');
+const https = require('https');
 const { logger } = require('../configs/logger-config');
 
-class HttpServer {
-  constructor(app, port) {
+class Server {
+  constructor(app, port, ssl) {
     this.app = app;
     this.port = port;
+    this.ssl = ssl;
   }
 
   /**
@@ -18,7 +20,9 @@ class HttpServer {
     const port = this.normalizePort(this.port);
     this.app.set('port', port);
 
-    const server = http.createServer(this.app);
+    const server = this.ssl
+    ? https.createServer(this.ssl, this.app)
+    : http.createServer(this.app);
 
     server.listen(port);
     server.on('error', (error) => { this.onError(error, port) });
@@ -69,7 +73,7 @@ class HttpServer {
 }
 
 const port = process.env.PORT || env.server.port;
-const httpServer = new HttpServer(app, port);
+const server = new Server(app, port);
 
 // 서버 실행
-httpServer.run();
+server.run();
