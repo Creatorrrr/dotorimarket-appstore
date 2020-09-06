@@ -33,6 +33,14 @@ down() {
   docker-compose -f "$DOCKER_COMPOSE_PATH" down
 }
 
+down_web() {
+  docker-compose -f "$DOCKER_COMPOSE_PATH" down web
+}
+
+down_db() {
+  docker-compose -f "$DOCKER_COMPOSE_PATH" down db
+}
+
 log() {
   docker-compose -f "$DOCKER_COMPOSE_PATH" logs -f
 }
@@ -63,5 +71,11 @@ case "$1" in
     ;;
   stop)
     down
+    ;;
+  stop_web)
+    down_web
+    ;;
+  stop_db)
+    down_db
     ;;
 esac
