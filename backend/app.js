@@ -70,10 +70,10 @@ app.use('/api', (req, res, next) => {
 
 // 라우터 등록
 app.use('/', indexRouter);
+app.use('/download/', appRouter);
 app.use('/api/mobile'
   , userRouter
   , accountRouter
-  , appRouter
   , dealRouter);
 
 // 라우터에 없는 경로는 404(Not Found)처리
