@@ -19,7 +19,6 @@ services:
     image: mongo:4.2.8
     ports:
       - "27017:27017"
-    privileged: true
     volumes:
       - ~/dotorimarket/appstore/db:/data/db
     networks:
