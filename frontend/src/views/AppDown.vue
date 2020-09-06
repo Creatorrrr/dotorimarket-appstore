@@ -23,7 +23,7 @@
         cols="12"
         sm="6"
       >
-        <a :href="'itms-services://?action=download-manifest&url=http://192.168.123.102:3000/api/apps/dotori-ios.plist'">
+        <a :href="'itms-services://?action=download-manifest&url=https://appstore.dotorimarket.com/api/apps/dotori-ios.plist'">
           <v-img
             :src="require('../assets/images/ios-logo.png')"
             class="my-3"
