@@ -9,7 +9,7 @@
         cols="12"
         sm="4"
       >
-        <a :href="'/api/mobile/v1/apps/dotori-android.apk'">
+        <a :href="'/download/v1/apps/dotori-android.apk'">
           <v-img
             :src="require('../assets/images/android-logo.png')"
             class="my-3"
