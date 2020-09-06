@@ -88,8 +88,8 @@ router.get('/v1/accounts/:accountId', async (req, res, next) => {
     };
 
     res.json({
-      statusCode: HttpConfig.SUCCESS.statusCode,
-      message: HttpConfig.SUCCESS.message,
+      statusCode: HttpConfig.OK.statusCode,
+      message: HttpConfig.OK.message,
       result: payload,
     });
   } catch(err) {
@@ -129,8 +129,8 @@ router.get('/v1/accounts', async (req, res, next) => {
     }
 
     res.json({
-      statusCode: HttpConfig.SUCCESS.statusCode,
-      message: HttpConfig.SUCCESS.message,
+      statusCode: HttpConfig.OK.statusCode,
+      message: HttpConfig.OK.message,
       result: payload,
     });
   } catch (err) {

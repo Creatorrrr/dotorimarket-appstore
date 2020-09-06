@@ -1,7 +1,7 @@
 'use strict';
 
 class HttpConfig {}
-HttpConfig.SUCCESS = { statusCode: 200, message: '정상처리되었습니다'};
+HttpConfig.OK = { statusCode: 200, message: '정상처리되었습니다'};
 HttpConfig.BAD_REQUEST = { statusCode: 400, message: '잘못된 요청입니다'};
 HttpConfig.UNAUTHORIZED = { statusCode: 401, message: '사용자 인증에 실패했습니다'};
 HttpConfig.FORBIDDEN = { statusCode: 403, message: '  허용되지 않은 요청입니다'};

@@ -92,8 +92,8 @@ router.get('/v1/deals/:dealId', async (req, res, next) => {
     };
 
     res.json({
-      statusCode: HttpConfig.SUCCESS.statusCode,
-      message: HttpConfig.SUCCESS.message,
+      statusCode: HttpConfig.OK.statusCode,
+      message: HttpConfig.OK.message,
       result: payload,
     });
   } catch(err) {
@@ -136,8 +136,8 @@ router.get('/v1/deals', async (req, res, next) => {
     }
 
     res.json({
-      statusCode: HttpConfig.SUCCESS.statusCode,
-      message: HttpConfig.SUCCESS.message,
+      statusCode: HttpConfig.OK.statusCode,
+      message: HttpConfig.OK.message,
       result: payload,
     });
   } catch (err) {

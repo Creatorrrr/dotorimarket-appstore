@@ -32,8 +32,8 @@ router.post('/v1/users', async (req, res, next) => {
       const payload = { user, token };
   
       res.json({
-        statusCode: HttpConfig.SUCCESS.statusCode,
-        message: HttpConfig.SUCCESS.message,
+        statusCode: HttpConfig.OK.statusCode,
+        message: HttpConfig.OK.message,
         result: payload,
       });
     } else {
