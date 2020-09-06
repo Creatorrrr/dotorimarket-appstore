@@ -16,7 +16,7 @@ services:
     networks:
       - dotorimarket
   db:
-    image: mongo:4.2.8
+    build: ./mongodb
     ports:
       - "27017:27017"
     volumes:
