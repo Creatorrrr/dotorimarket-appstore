@@ -34,7 +34,7 @@ class LoggerFactory {
           format: winston.format.combine(
             winston.format.label({ label }),
             winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-            winston.format.printf(info => `${info.label} ${info.timestamp} [${info.level.toUpperCase()}] - ${strip(info.message.toString())}`),
+            winston.format.printf(info => `${info.label} ${info.timestamp} [${info.level.toUpperCase()}] - ${info.message ? strip(info.message.toString()) : info.message}`),
           ),
           filename: `${filePath}/${label}-%DATE%.log`,
           datePattern: 'YYYY-MM-DD',

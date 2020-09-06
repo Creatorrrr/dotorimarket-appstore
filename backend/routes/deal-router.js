@@ -3,7 +3,7 @@
 const createError = require('http-errors');
 const HttpConfig = require('../configs/http-config');
 const express = require('express');
-const Deal = require('../models/deal');
+const getDealModel = require('../models/deal');
 
 const router = express.Router();
 
@@ -12,6 +12,7 @@ const router = express.Router();
  */
 router.post('/v1/deals', async (req, res, next) => {
   try {
+    const Deal = await getDealModel();
     const deal = new Deal({
       title: req.body.title,
       categoryId: req.body.categoryId,
@@ -42,6 +43,7 @@ router.patch('/v1/deals/:dealId', async (req, res, next) => {
       type: req.body.type,
     };
 
+    const Deal = await getDealModel();
     const result = await Deal.updateOne({ dealId }, deal);
 
     res.json({ result });
@@ -57,6 +59,7 @@ router.delete('/v1/deals/:dealId', async (req, res, next) => {
   try {
     const dealId = req.params.dealId;
 
+    const Deal = await getDealModel();
     const result = await Deal.deleteOne({ dealId });
 
     res.json({ result });
@@ -73,6 +76,7 @@ router.get('/v1/deals/:dealId', async (req, res, next) => {
     const dealId = req.params.dealId;
 
     // 조회
+    const Deal = await getDealModel();
     const deal = await Deal.findOne({
       dealId: dealId,
     });
@@ -109,6 +113,7 @@ router.get('/v1/deals', async (req, res, next) => {
     const paging = JSON.parse(req.query.paging || null);
 
     // 조회 조건 적용
+    const Deal = await getDealModel();
     let deals = Deal.find( filter );                                      // 필터
     if (field) deals = deals.regex(field, new RegExp(`.*${keyword}.*`));  // like 검색
     if (orders) deals = deals.sort(orders);                               // 정렬

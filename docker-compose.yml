@@ -1,4 +1,4 @@
-version: '3'
+version: '3.8'
 
 services:
   web:
@@ -12,10 +12,16 @@ services:
     environment:
       - JWT_SECRET=yessecret
       - DB_DEFAULT_HOST=mongodb://db:27017/dotorimarket-appstore
+    networks:
+      - dotorimarket
   db:
     image: mongo:4.2.8
-    privileged: true
     ports:
       - "27017:27017"
     volumes:
       - ~/dotorimarket/appstore/db:/data/db
+    networks:
+      - dotorimarket
+
+networks:
+  dotorimarket:

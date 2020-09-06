@@ -4,7 +4,7 @@ const createError = require('http-errors');
 const HttpConfig = require('../configs/http-config');
 const express = require('express');
 const { logger } = require('../configs/logger-config');
-const Account = require('../models/account');
+const getAccountModel = require('../models/account');
 
 const router = express.Router();
 
@@ -13,6 +13,7 @@ const router = express.Router();
  */
 router.post('/v1/accounts', async (req, res, next) => {
   try {
+    const Account = await getAccountModel();
     const account = new Account({
       accountId: req.body.accountId,
       password: req.body.password,
@@ -24,6 +25,7 @@ router.post('/v1/accounts', async (req, res, next) => {
 
     res.json({ result });
   } catch(err) {
+    logger.error(err)
     next(err);
   }
 });
@@ -40,6 +42,7 @@ router.patch('/v1/accounts/:accountId', async (req, res, next) => {
       email: req.body.email,
     };
 
+    const Account = await getAccountModel();
     const result = await Account.updateOne({ accountId }, account);
 
     res.json({ result });
@@ -55,6 +58,7 @@ router.delete('/v1/accounts/:accountId', async (req, res, next) => {
   try {
     const accountId = req.params.accountId;
 
+    const Account = await getAccountModel();
     const result = await Account.deleteOne({ accountId });
 
     res.json({ result });
@@ -71,6 +75,7 @@ router.get('/v1/accounts/:accountId', async (req, res, next) => {
     const accountId = req.params.accountId;
 
     // 조회
+    const Account = await getAccountModel();
     const account = await Account.findOne({
       accountId: accountId,
     });
@@ -104,6 +109,7 @@ router.get('/v1/accounts', async (req, res, next) => {
     const paging = JSON.parse(req.query.paging || null);
 
     // 조회 조건 적용
+    const Account = await getAccountModel();
     let accounts = Account.find( filter );                                      // 필터
     if (field) accounts = accounts.regex(field, new RegExp(`.*${keyword}.*`));  // like 검색
     if (orders) accounts = accounts.sort(orders);                               // 정렬

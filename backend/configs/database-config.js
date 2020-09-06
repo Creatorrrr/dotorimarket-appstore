@@ -12,19 +12,18 @@ class DatabaseConfig {
    * 
    * @param {*} db 연결할 대상 DB (DatabaseConfig.db 하위에서 선택)
    */
-  static getConnection(db){
+  static async getConnection(db) {
     if (!conns.has(db.id)) {
-      const conn = DatabaseFactory.createConnection(db.host, {
-        onOpen: () => {
-          logger.info('DB Connected');
-        },
-        onError: (err) => {
-          logger.error(err.stack);
-        },
-      });
-      conns.set(db.id, conn);
+      const promise = async () => {
+        const conn = await DatabaseFactory.createConnection(db.host);
+        logger.info('DB connected');
+
+        return conn;
+      };
+      conns.set(db.id, promise());
     }
-    return conns.get(db.id);
+
+    return await conns.get(db.id);
   };
 }
 // 연결 대상 DB 정보

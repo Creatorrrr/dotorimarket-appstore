@@ -5,7 +5,8 @@ const HttpConfig = require('../configs/http-config');
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const PassportConfig = require('../configs/passport-config');
-const Account = require('../models/account');
+const getAccountModel = require('../models/account');
+const { logger } = require('../configs/logger-config');
 
 const router = express.Router();
 
@@ -17,6 +18,7 @@ router.post('/v1/users', async (req, res, next) => {
     const userId = req.body.userId;
     const password = req.body.password;
   
+    const Account = await getAccountModel();
     const account = await Account.findOne({
       accountId: userId,
       password: password,
