@@ -1,6 +1,5 @@
 'use strict';
 
-const env = require('../utils/env/env');
 const { logger } = require('./logger-config');
 const DatabaseFactory = require('../utils/database/database-factory');
 

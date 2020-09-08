@@ -14,7 +14,7 @@ const getDealModel = async () => {
       dealId:  Number,
       title: String,
       categoryId: String,
-      price: String,
+      price: Number,
       description: String,
       type: String,
     });
