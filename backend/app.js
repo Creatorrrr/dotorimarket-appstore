@@ -5,6 +5,7 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const passport = require('passport');
+const fileUpload = require('express-fileupload');
 const { logger, expressLogger } = require('./configs/logger-config');
 const PassportConfig = require('./configs/passport-config');
 const HttpConfig = require('./configs/http-config');
@@ -23,6 +24,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(fileUpload());
 app.use(passport.initialize());
 PassportConfig.initPassport();
 app.use(PassportConfig.authenticateJWT);
@@ -69,7 +71,6 @@ app.use('/api', (req, res, next) => {
 });
 
 // 라우터 등록
-app.use('/', indexRouter);
 app.use('/download/', appRouter);
 app.use('/api/mobile'
   , userRouter

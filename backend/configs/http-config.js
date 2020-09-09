@@ -8,5 +8,6 @@ HttpConfig.FORBIDDEN = { statusCode: 403, message: '  허용되지 않은 요청
 HttpConfig.NOT_FOUND = { statusCode: 404, message: '알 수 없는 경로입니다'};
 HttpConfig.FILE_NOT_FOUND = { statusCode: 404, message: '알 수 없는 파일입니다'};
 HttpConfig.UPGRADE_REQUIRED = { statusCode: 426, message: '업데이트가 필요합니다'};
+HttpConfig.INTERNAL_SERVER_ERROR = { statusCode: 500, message: '알 수 없는 서버 에러입니다'};
 
 module.exports = HttpConfig;

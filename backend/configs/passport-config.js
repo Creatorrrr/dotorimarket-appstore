@@ -44,23 +44,30 @@ class PassportConfig {
    * JWT 토큰 인증 처리
    */
   static authenticateJWT(req, res, next) {
-    // if (!PassportConfig.IGNORE_PATHS.includes(req.path)) {
-    //   passport.authenticate('jwt', { session: false }, (err, user, info) => {
-    //     if (err) next(err); 
-    //     else if (!user) next(createError(HttpConfig.UNAUTHORIZED.statusCode, HttpConfig.UNAUTHORIZED.message));
-    //     else next();
-    //   })(req, res, next);
-    // } else {
+    let matched = PassportConfig.IGNORE_PATHS.find(
+      ignorePath => req.path.match(ignorePath.pattern) && (req.method == ignorePath.method || !ignorePath.method));
+
+    if (matched) {
       next();
-    // }
+    } else {
+      passport.authenticate('jwt', { session: false }, (err, user, info) => {
+        if (err) next(err); 
+        else if (!user) next(createError(HttpConfig.UNAUTHORIZED.statusCode, HttpConfig.UNAUTHORIZED.message));
+        else next();
+      })(req, res, next);
+    }
   }
 }
 PassportConfig.JWT_SECRET = process.env.JWT_SECRET; // ***** DB를 통해 처리하도록 개선
-PassportConfig.IGNORE_PATHS = [                     // ***** ANT 패턴으로 매칭하도록 개선
-  '/api/users',
-  '/api/apps/dotori-android.apk',
-  '/api/apps/dotori-ios.plist',
-  '/api/apps/dotori-ios.ipa',
+PassportConfig.IGNORE_PATHS = [                     // ***** DB를 통해 처리하도록 개선
+  {
+    pattern: /^\/download\/(.*)$/,
+    method: 'GET'
+  },
+  {
+    pattern: /^\/api\/mobile\/v[0-9]+\/users$/,
+    method: 'POST'
+  },
 ];
 
 // JWT_SECRET이 초기화 안 되어 있을 경우 에러 발생
