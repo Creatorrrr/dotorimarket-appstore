@@ -12,15 +12,18 @@ services:
       - ~/dotorimarket/appstore/files:/app/files
     environment:
       - JWT_SECRET=yessecret
-      - DB_DEFAULT_HOST=mongodb://db:27017/dotorimarket-appstore
+      - DB_DEFAULT_HOST=mongodb://dotori-user:Ehxhfl0706%21%40@db:27890/dotorimarket-appstore
     networks:
       - dotorimarket
   db:
     build: ./mongodb
     ports:
-      - "27017:27017"
+      - "27890:27017"
     volumes:
       - ~/dotorimarket/appstore/db:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=mongo-admin
+      - MONGO_INITDB_ROOT_PASSWORD=Ahdrh0706!@
     networks:
       - dotorimarket
 
