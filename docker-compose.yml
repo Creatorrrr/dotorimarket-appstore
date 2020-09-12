@@ -12,7 +12,7 @@ services:
       - ~/dotorimarket/appstore/files:/app/files
     environment:
       - JWT_SECRET=yessecret
-      - DB_DEFAULT_HOST=mongodb://dotori-user:Ehxhfl0706%21%40@db:27890/dotorimarket-appstore
+      - DB_DEFAULT_HOST=mongodb://dotori-user:Ehxhfl0706!%40@db:27017/dotorimarket-appstore?authSource=admin
     networks:
       - dotorimarket
   db:
