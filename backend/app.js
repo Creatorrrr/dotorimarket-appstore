@@ -32,7 +32,7 @@ app.use(PassportConfig.authenticateJWT);
 // 버전을 확인하여 현재 버전보다 아래면 업데이트 요청 반환
 app.use('/api', (req, res, next) => {
   try {
-    const serverVersion = '1.0.0'  // ********** 임시로 하드코딩함
+    const serverVersion = '1.0.1'  // ********** 임시로 하드코딩함
     const appVersion = req.headers['app-version'];
 
     if (appVersion) {
