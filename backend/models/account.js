@@ -7,7 +7,7 @@ const DatabaseConfig = require('../configs/database-config');
 let Account;
 
 const getAccountModel = async () => {
-  if (!Account) {
+  if (!Account) {console.log(DatabaseConfig.db.default)
     const conn = await DatabaseConfig.getConnection(DatabaseConfig.db.default);
   
     mongoose.set('useCreateIndex', true)

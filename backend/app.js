@@ -10,11 +10,13 @@ const { logger, expressLogger } = require('./configs/logger-config');
 const PassportConfig = require('./configs/passport-config');
 const HttpConfig = require('./configs/http-config');
 
-const indexRouter = require('./routes/index-router');
+const applicationRouter = require('./routes/application-router');
 const userRouter = require('./routes/user-router');
 const accountRouter = require('./routes/account-router');
 const appRouter = require('./routes/app-router');
 const dealRouter = require('./routes/deal-router');
+
+const getApplicationModel = require('./models/application');
 
 const app = express();
 
@@ -30,10 +32,16 @@ PassportConfig.initPassport();
 app.use(PassportConfig.authenticateJWT);
 
 // 버전을 확인하여 현재 버전보다 아래면 업데이트 요청 반환
-app.use('/api', (req, res, next) => {
+app.use('/api', async (req, res, next) => {
   try {
-    const serverVersion = '1.0.1'  // ********** 임시로 하드코딩함
-    const appVersion = req.headers['app-version'];
+    // 앱 버전 조회
+    const Application = await getApplicationModel();
+    const application = await Application.findOne({
+      applicationId: 1,
+    });
+
+    const serverVersion = application.version;
+    const appVersion = req.headers['app-version']; 
 
     if (appVersion) {
       const serverVersionSplited = serverVersion.split('.');
@@ -71,6 +79,7 @@ app.use('/api', (req, res, next) => {
 });
 
 // 라우터 등록
+app.use('/system/', applicationRouter);
 app.use('/download/', appRouter);
 app.use('/api/mobile'
   , userRouter
