@@ -15,6 +15,7 @@ const userRouter = require('./routes/user-router');
 const accountRouter = require('./routes/account-router');
 const appRouter = require('./routes/app-router');
 const dealRouter = require('./routes/deal-router');
+const noticeRouter = require('./routes/notice-router');
 
 const getApplicationModel = require('./models/application');
 
@@ -81,10 +82,12 @@ app.use('/api', async (req, res, next) => {
 // 라우터 등록
 app.use('/system/', applicationRouter);
 app.use('/download/', appRouter);
-app.use('/api/mobile'
-  , userRouter
-  , accountRouter
-  , dealRouter);
+app.use('/api/mobile',
+  userRouter,
+  accountRouter,
+  dealRouter,
+  noticeRouter,
+);
 
 // 라우터에 없는 경로는 404(Not Found)처리
 app.use((req, res, next) => {
