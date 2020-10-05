@@ -16,6 +16,7 @@ const accountRouter = require('./routes/account-router');
 const appRouter = require('./routes/app-router');
 const dealRouter = require('./routes/deal-router');
 const noticeRouter = require('./routes/notice-router');
+const categoryRouter = require('./routes/category-router');
 
 const getApplicationModel = require('./models/application');
 
@@ -87,6 +88,7 @@ app.use('/api/mobile',
   accountRouter,
   dealRouter,
   noticeRouter,
+  categoryRouter,
 );
 
 // 라우터에 없는 경로는 404(Not Found)처리

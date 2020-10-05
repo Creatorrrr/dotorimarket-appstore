@@ -9,8 +9,6 @@ let Application;
 const getApplicationModel = async () => {
   if (!Application) {
     const conn = await DatabaseConfig.getConnection(DatabaseConfig.db.default);
-  
-    mongoose.set('useCreateIndex', true)
     
     const applicationSchema = new mongoose.Schema({
       applicationId: {
@@ -23,6 +21,8 @@ const getApplicationModel = async () => {
       version: {
         type: String,
       },
+    }, {
+      timestamps: true,
     });
     
     applicationSchema.plugin(autoIncrement.plugin, {

@@ -17,6 +17,8 @@ const getDealModel = async () => {
       price: Number,
       description: String,
       type: String,
+    }, {
+      timestamps: true,
     });
     
     dealSchema.plugin(autoIncrement.plugin, {
