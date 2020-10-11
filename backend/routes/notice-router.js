@@ -78,14 +78,14 @@ router.get('/v1/notices/:noticeId', async (req, res, next) => {
     });
 
     // 데이터 가공
-    const payload = {
+    const payload = notice ? {
       noticeId: notice.noticeId,
       title: notice.title,
       type: notice.type,
       content: notice.content,
       createdAt: notice.createdAt,
       updatedAt: notice.updatedAt,
-    };
+    } : undefined;
 
     res.json({
       statusCode: HttpConfig.OK.statusCode,

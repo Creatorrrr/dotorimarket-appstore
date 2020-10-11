@@ -27,9 +27,17 @@ router.post('/v1/users', async (req, res, next) => {
     // userId와 password가 일치하는 사용자 존재 여부 확인
     if (account) {
       // 데이터 가공
-      const user = { userId: userId };                          // 사용자 정보
-      const token = jwt.sign(user, PassportConfig.JWT_SECRET);  // 토큰
-      const payload = { user, token };
+      const token = jwt.sign({ id: account._id }, PassportConfig.JWT_SECRET);  // 토큰
+      const payload = {
+        account: {
+          id: account._id,
+          accountId: account.accountId,
+          password: account.password,
+          name: account.name,
+          email: account.email,
+        },
+        token
+      };
   
       res.json({
         statusCode: HttpConfig.OK.statusCode,

@@ -7,7 +7,7 @@ const DatabaseConfig = require('../configs/database-config');
 let Account;
 
 const getAccountModel = async () => {
-  if (!Account) {console.log(DatabaseConfig.db.default)
+  if (!Account) {
     const conn = await DatabaseConfig.getConnection(DatabaseConfig.db.default);
     
     const accountSchema = new mongoose.Schema({

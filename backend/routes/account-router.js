@@ -81,11 +81,12 @@ router.get('/v1/accounts/:accountId', async (req, res, next) => {
     });
 
     // 데이터 가공
-    const payload = {
+    const payload = account ? {
+      _id: account._id,
       accountId: account.accountId,
       name: account.name,
       email: account.email,
-    };
+    } : undefined;
 
     res.json({
       statusCode: HttpConfig.OK.statusCode,
@@ -122,6 +123,7 @@ router.get('/v1/accounts', async (req, res, next) => {
     const payload = [];
     for (let account of accounts) {
       payload.push({
+        _id: account._id,
         accountId: account.accountId,
         name: account.name,
         email: account.email,

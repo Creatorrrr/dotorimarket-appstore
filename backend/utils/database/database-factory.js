@@ -18,6 +18,7 @@ class DatabaseFactory {
       useCreateIndex: true,
       useNewUrlParser: true,
       useUnifiedTopology: true,
+      useFindAndModify: false,
       serverSelectionTimeoutMS: 3000,
     });
     autoIncrement.initialize(conn);

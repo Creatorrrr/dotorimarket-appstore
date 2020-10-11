@@ -74,12 +74,12 @@ router.get('/v1/categories/:categoryId', async (req, res, next) => {
     });
 
     // 데이터 가공
-    const payload = {
+    const payload = category ? {
       categoryId: category.categoryId,
       name: category.name,
       createdAt: category.createdAt,
       updatedAt: category.updatedAt,
-    };
+    } : undefined;
 
     res.json({
       statusCode: HttpConfig.OK.statusCode,

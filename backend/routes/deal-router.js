@@ -82,14 +82,14 @@ router.get('/v1/deals/:dealId', async (req, res, next) => {
     });
 
     // 데이터 가공
-    const payload = {
+    const payload = deal ? {
       dealId: deal.dealId,
       title: deal.title,
       categoryId: deal.categoryId,
       price: deal.price,
       description: deal.description,
       type: deal.type,
-    };
+    } : undefined;
 
     res.json({
       statusCode: HttpConfig.OK.statusCode,

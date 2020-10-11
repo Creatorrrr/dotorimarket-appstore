@@ -76,11 +76,11 @@ router.get('/v1/applications/:applicationId', async (req, res, next) => {
     });
 
     // 데이터 가공
-    const payload = {
+    const payload = application ? {
       applicationId: application.applicationId,
       name: application.name,
       version: application.version,
-    };
+    } : undefined;
 
     res.json({
       statusCode: HttpConfig.OK.statusCode,
