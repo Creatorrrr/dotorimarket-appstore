@@ -36,14 +36,13 @@ router.post('/v1/accounts', async (req, res, next) => {
 router.patch('/v1/accounts/:accountId', async (req, res, next) => {
   try {
     const accountId = req.params.accountId;
-    const account = {
-      password: req.body.password,
-      name: req.body.password,
-      email: req.body.email,
-    };
+    const account = {};
+    if (req.body.password) account.password = req.body.password;
+    if (req.body.name) account.name = req.body.name;
+    if (req.body.email) account.email = req.body.email;
 
     const Account = await getAccountModel();
-    const result = await Account.updateOne({ accountId }, account);
+    const result = await Account.updateOne({ _id: accountId }, account);
 
     res.json({ result });
   } catch(err) {
@@ -59,7 +58,7 @@ router.delete('/v1/accounts/:accountId', async (req, res, next) => {
     const accountId = req.params.accountId;
 
     const Account = await getAccountModel();
-    const result = await Account.deleteOne({ accountId });
+    const result = await Account.deleteOne({ _id: accountId });
 
     res.json({ result });
   } catch(err) {
@@ -77,12 +76,12 @@ router.get('/v1/accounts/:accountId', async (req, res, next) => {
     // 조회
     const Account = await getAccountModel();
     const account = await Account.findOne({
-      accountId: accountId,
+      _id: accountId,
     });
 
     // 데이터 가공
     const payload = account ? {
-      _id: account._id,
+      id: account._id,
       accountId: account.accountId,
       name: account.name,
       email: account.email,
@@ -123,7 +122,7 @@ router.get('/v1/accounts', async (req, res, next) => {
     const payload = [];
     for (let account of accounts) {
       payload.push({
-        _id: account._id,
+        id: account._id,
         accountId: account.accountId,
         name: account.name,
         email: account.email,
