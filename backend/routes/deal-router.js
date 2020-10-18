@@ -4,6 +4,7 @@ const createError = require('http-errors');
 const HttpConfig = require('../configs/http-config');
 const express = require('express');
 const getDealModel = require('../models/deal');
+const getChatModel = require('../models/chat');
 
 const router = express.Router();
 
@@ -75,6 +76,7 @@ router.get('/v1/deals/:dealId', async (req, res, next) => {
     const dealId = req.params.dealId;
 
     // 조회
+    await getChatModel();
     const Deal = await getDealModel();
     const deal = await Deal.findOne({
       _id: dealId,

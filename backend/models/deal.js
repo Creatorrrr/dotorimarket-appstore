@@ -15,6 +15,7 @@ const getDealModel = async () => {
       price: Number,
       description: String,
       type: String,
+      chat: { type: mongoose.Types.ObjectId, ref: 'chat' },
     }, {
       timestamps: true,
     });

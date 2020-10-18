@@ -6,6 +6,7 @@ const express = require('express');
 const getAccountModel = require('../models/account');
 const getChatModel = require('../models/chat');
 const getChatContentModel = require('../models/chat-content');
+const getDealModel = require('../models/deal');
 
 const router = express.Router();
 
@@ -20,12 +21,22 @@ router.post('/v1/chats', async (req, res, next) => {
     const Chat = await getChatModel();
     const chat = new Chat({
       title: req.body.title,
+      deal: req.body.dealId,
       members: req.body.members,
     });
 
-    const result = await chat.save();
+    const chatResult = await chat.save();
 
-    res.json({ result });
+    const deal = {}
+    if (chatResult) deal.chat = chatResult._id;
+
+    const Deal = await getDealModel();
+    const dealResult = await Deal.updateOne({ _id: req.body.dealId }, deal);    
+
+    res.json({
+      chat: chatResult,
+      deal: dealResult,
+    });
   } catch(err) {
     next(err);
   }
