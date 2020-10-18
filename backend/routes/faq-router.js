@@ -33,8 +33,8 @@ router.patch('/v1/faqs/:faqId', async (req, res, next) => {
   try {
     const faqId = req.params.faqId;
     const faq = {};
-    if (faq.title) faq.title = req.body.title;
-    if (faq.content) faq.content = req.body.content;
+    if (req.body.title) faq.title = req.body.title;
+    if (req.body.content) faq.content = req.body.content;
 
     const Faq = await getFaqModel();
     const result = await Faq.updateOne({ _id: faqId }, faq);

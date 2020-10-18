@@ -35,16 +35,15 @@ router.post('/v1/deals', async (req, res, next) => {
 router.patch('/v1/deals/:dealId', async (req, res, next) => {
   try {
     const dealId = req.params.dealId;
-    const deal = {
-      title: req.body.title,
-      categoryId: req.body.categoryId,
-      price: req.body.price,
-      description: req.body.description,
-      type: req.body.type,
-    };
+    const deal = {};
+    if(req.body.title) deal.title = req.body.title;
+    if(req.body.categoryId) deal.categoryId = req.body.categoryId;
+    if(req.body.price) deal.price = req.body.price;
+    if(req.body.description) deal.description = req.body.description;
+    if(req.body.type) deal.type = req.body.type;
 
     const Deal = await getDealModel();
-    const result = await Deal.updateOne({ dealId }, deal);
+    const result = await Deal.updateOne({ _id: dealId }, deal);
 
     res.json({ result });
   } catch(err) {
@@ -60,7 +59,7 @@ router.delete('/v1/deals/:dealId', async (req, res, next) => {
     const dealId = req.params.dealId;
 
     const Deal = await getDealModel();
-    const result = await Deal.deleteOne({ dealId });
+    const result = await Deal.deleteOne({ _id: dealId });
 
     res.json({ result });
   } catch(err) {
@@ -78,12 +77,12 @@ router.get('/v1/deals/:dealId', async (req, res, next) => {
     // 조회
     const Deal = await getDealModel();
     const deal = await Deal.findOne({
-      dealId: dealId,
+      _id: dealId,
     });
 
     // 데이터 가공
     const payload = deal ? {
-      dealId: deal.dealId,
+      id: deal._id,
       title: deal.title,
       categoryId: deal.categoryId,
       price: deal.price,
@@ -126,7 +125,7 @@ router.get('/v1/deals', async (req, res, next) => {
     const payload = [];
     for (let deal of deals) {
       payload.push({
-        dealId: deal.dealId,
+        id: deal._id,
         title: deal.title,
         categoryId: deal.categoryId,
         price: deal.price,
