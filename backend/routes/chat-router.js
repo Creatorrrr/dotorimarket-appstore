@@ -284,7 +284,7 @@ router.get('/v1/chats/:chatId/contents', async (req, res, next) => {
     const keyword = req.query.keyword || null;
     const orders = JSON.parse(req.query.orders || null);
     const paging = JSON.parse(req.query.paging || null);
-
+    
     // 조회 조건 적용
     await getAccountModel();
     await getChatModel();

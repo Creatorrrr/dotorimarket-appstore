@@ -4,6 +4,7 @@ const env = require('../utils/env/env');
 const app = require('../app');
 const http = require('http');
 const https = require('https');
+const initSocketServer = require('../socket');
 const { logger } = require('../configs/logger-config');
 
 class Server {
@@ -20,13 +21,19 @@ class Server {
     const port = this.normalizePort(this.port);
     this.app.set('port', port);
 
+    // 서버 생성
     const server = this.ssl
     ? https.createServer(this.ssl, this.app)
     : http.createServer(this.app);
 
+    // 소켓 서버 초기화
+    initSocketServer(server);
+
     server.listen(port);
     server.on('error', (error) => { this.onError(error, port) });
     server.on('listening', () => { this.onListening(server) });
+
+    return server;
   }
 
   /**
