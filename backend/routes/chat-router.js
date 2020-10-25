@@ -21,22 +21,26 @@ router.post('/v1/chats', async (req, res, next) => {
     const Chat = await getChatModel();
     const chat = new Chat({
       title: req.body.title,
-      deal: req.body.dealId,
+      deal: req.body.deal,
       members: req.body.members,
     });
 
-    const chatResult = await chat.save();
+    const chatSaved = await chat.save();
 
     const deal = {}
-    if (chatResult) deal.chat = chatResult._id;
+    if (chatSaved) deal.chat = chatSaved._id;
 
     const Deal = await getDealModel();
-    const dealResult = await Deal.updateOne({ _id: req.body.dealId }, deal);    
+    await Deal.updateOne({ _id: req.body.deal }, deal);
 
-    res.json({
-      chat: chatResult,
-      deal: dealResult,
-    });
+    const result = chatSaved ? {
+      id: chatSaved._id,
+      title: chatSaved.title,
+      deal: chatSaved.deal,
+      members: chatSaved.members,
+    } : undefined;
+
+    res.json({ result });
   } catch(err) {
     next(err);
   }
@@ -50,6 +54,7 @@ router.patch('/v1/chats/:chatId', async (req, res, next) => {
     const chatId = req.params.chatId;
     const chat = {};
     if (req.body.title) chat.title = req.body.title;
+    if (req.body.deal) chat.title = req.body.deal;
     if (req.body.members || req.body.contents) {
       chat.$push = {};
       if (req.body.members) chat.$push.members = req.body.members;
@@ -90,12 +95,18 @@ router.get('/v1/chats/:chatId', async (req, res, next) => {
     const mode = req.query.mode || GET_ONE_MODE_SIMPLE;
 
     // 조회
+    await getDealModel();
     await getAccountModel();
     await getChatContentModel();
     const Chat = await getChatModel();
     const chat = await Chat.findOne({
       _id: chatId,
-    }).populate('members').populate('contents').exec();
+    })
+    .populate('deal')
+    .populate('deal.seller')
+    .populate('members')
+    .populate('contents')
+    .exec();
 
     const members = [];
     for (let member of chat.members) {
@@ -111,7 +122,21 @@ router.get('/v1/chats/:chatId', async (req, res, next) => {
       title: chat.title,
       createdAt: chat.createdAt,
       updatedAt: chat.updatedAt,
-      members
+      deal: chat.deal ? {
+        id: chat.deal._id,
+        title: chat.deal.title,
+        categoryId: chat.deal.categoryId,
+        price: chat.deal.price,
+        description: chat.deal.description,
+        type: chat.deal.type,
+        seller: chat.deal.seller ? {
+          id: chat.deal.seller._id,
+          accountId: chat.deal.seller.accountId,
+          name: chat.deal.seller.name,
+          email: chat.deal.seller.email,
+        } : undefined,
+      } : undefined,
+      members,
     }
 
     res.json({
@@ -136,6 +161,7 @@ router.get('/v1/chats', async (req, res, next) => {
     const paging = JSON.parse(req.query.paging || null);
 
     // 조회 조건 적용
+    await getDealModel();
     await getAccountModel();
     await getChatContentModel();
     const Chat = await getChatModel();
@@ -145,7 +171,7 @@ router.get('/v1/chats', async (req, res, next) => {
     if (paging) chats = chats.skip(paging.skip).limit(paging.limit);      // 페이징
 
     // 조회
-    chats = await chats.populate('members').populate('contents').exec();
+    chats = await chats.populate('deal').populate('members').populate('contents').exec();
 
     const payload = [];
     for (let chat of chats) {
@@ -163,6 +189,20 @@ router.get('/v1/chats', async (req, res, next) => {
         title: chat.title,
         createdAt: chat.createdAt,
         updatedAt: chat.updatedAt,
+        deal: chat.deal ? {
+          id: chat.deal._id,
+          title: chat.deal.title,
+          categoryId: chat.deal.categoryId,
+          price: chat.deal.price,
+          description: chat.deal.description,
+          type: chat.deal.type,
+          seller: chat.deal.seller ? {
+            id: chat.deal.seller._id,
+            accountId: chat.deal.seller.accountId,
+            name: chat.deal.seller.name,
+            email: chat.deal.seller.email,
+          } : undefined,
+        } : undefined,
         members,
       });
     }

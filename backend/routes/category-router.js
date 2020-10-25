@@ -36,7 +36,7 @@ router.patch('/v1/categories/:categoryId', async (req, res, next) => {
     };
 
     const Category = await getCategoryModel();
-    const result = await Category.updateOne({ categoryId }, category);
+    const result = await Category.updateOne({ _id: categoryId }, category);
 
     res.json({ result });
   } catch(err) {
@@ -52,7 +52,7 @@ router.delete('/v1/categories/:categoryId', async (req, res, next) => {
     const categoryId = req.params.categoryId;
 
     const Category = await getCategoryModel();
-    const result = await Category.deleteOne({ categoryId });
+    const result = await Category.deleteOne({ _id: categoryId });
 
     res.json({ result });
   } catch(err) {
@@ -70,12 +70,12 @@ router.get('/v1/categories/:categoryId', async (req, res, next) => {
     // 조회
     const Category = await getCategoryModel();
     const category = await Category.findOne({
-      categoryId: categoryId,
+      _id:  categoryId,
     });
 
     // 데이터 가공
     const payload = category ? {
-      categoryId: category.categoryId,
+      id: category._id,
       name: category.name,
       createdAt: category.createdAt,
       updatedAt: category.updatedAt,
@@ -116,7 +116,7 @@ router.get('/v1/categories', async (req, res, next) => {
     const payload = [];
     for (let category of categories) {
       payload.push({
-        categoryId: category.categoryId,
+        id: category._id,
         name: category.name,
         createdAt: category.createdAt,
         updatedAt: category.updatedAt,

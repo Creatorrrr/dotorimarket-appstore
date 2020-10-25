@@ -6,6 +6,7 @@ const passportJWT = require('passport-jwt');
 const JWTStrategy = passportJWT.Strategy;
 const ExtractJWT = passportJWT.ExtractJwt;
 const HttpConfig = require('../configs/http-config');
+const getAccountModel = require('../models/account');
 
 class PassportConfig {
   /**
@@ -31,11 +32,25 @@ class PassportConfig {
     return new JWTStrategy({
         jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
         secretOrKey: PassportConfig.JWT_SECRET,
-      }, (jwtPayload, done) => {
-        return done(null, {
-          userId: jwtPayload.userId,
-          password: jwtPayload.password,
-        })
+      }, async (jwtPayload, done) => {
+        try {
+          const Account = await getAccountModel();
+          const account = await Account.findOne({
+            _id: jwtPayload.id,
+          });
+          if (account) {
+            return done(null, {
+              id: account._id,
+              accountId: account.accountId,
+              name: account.name,
+              email: account.email,
+            });
+          } else {
+            throw createError(HttpConfig.UNAUTHORIZED.statusCode, HttpConfig.UNAUTHORIZED.message);
+          }
+        } catch (err) {
+          done(err);
+        }
       }
     );
   }
@@ -53,7 +68,10 @@ class PassportConfig {
       passport.authenticate('jwt', { session: false }, (err, user, info) => {
         if (err) next(err); 
         else if (!user) next(createError(HttpConfig.UNAUTHORIZED.statusCode, HttpConfig.UNAUTHORIZED.message));
-        else next();
+        else {
+          req.user = user;
+          next();
+        }
       })(req, res, next);
     }
   }

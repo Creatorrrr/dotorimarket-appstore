@@ -11,11 +11,12 @@ const getDealModel = async () => {
   
     const dealSchema = new mongoose.Schema({
       title: String,
-      categoryId: String,
+      category: { type: mongoose.Types.ObjectId, ref: 'category' },
       price: Number,
       description: String,
       type: String,
       chat: { type: mongoose.Types.ObjectId, ref: 'chat' },
+      seller: { type: mongoose.Types.ObjectId, ref: 'account' },
     }, {
       timestamps: true,
     });

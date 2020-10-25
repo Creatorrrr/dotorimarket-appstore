@@ -21,7 +21,7 @@ class Server {
     const port = this.normalizePort(this.port);
     this.app.set('port', port);
 
-    // 서버 생성
+    // http 서버 생성
     const server = this.ssl
     ? https.createServer(this.ssl, this.app)
     : http.createServer(this.app);
