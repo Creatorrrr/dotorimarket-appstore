@@ -18,6 +18,7 @@ const getAccountModel = async () => {
       password: String,
       name: String,
       email: String,
+      place: String,
     }, {
       timestamps: true,
     });

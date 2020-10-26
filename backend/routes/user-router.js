@@ -35,6 +35,7 @@ router.post('/v1/users', async (req, res, next) => {
           password: account.password,
           name: account.name,
           email: account.email,
+          place: account.place,
         },
         token
       };

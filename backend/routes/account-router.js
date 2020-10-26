@@ -19,6 +19,7 @@ router.post('/v1/accounts', async (req, res, next) => {
       password: req.body.password,
       name: req.body.password,
       email: req.body.email,
+      place: req.body.place,
     });
 
     const result = await account.save();
@@ -40,6 +41,7 @@ router.patch('/v1/accounts/:accountId', async (req, res, next) => {
     if (req.body.password) account.password = req.body.password;
     if (req.body.name) account.name = req.body.name;
     if (req.body.email) account.email = req.body.email;
+    if (req.body.place) account.place = req.body.place;
 
     const Account = await getAccountModel();
     const result = await Account.updateOne({ _id: accountId }, account);
@@ -85,6 +87,7 @@ router.get('/v1/accounts/:accountId', async (req, res, next) => {
       accountId: account.accountId,
       name: account.name,
       email: account.email,
+      place: account.place,
     } : undefined;
 
     res.json({
@@ -126,6 +129,7 @@ router.get('/v1/accounts', async (req, res, next) => {
         accountId: account.accountId,
         name: account.name,
         email: account.email,
+        place: account.place,
       });
     }
 

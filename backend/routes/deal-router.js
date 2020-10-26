@@ -17,6 +17,9 @@ router.post('/v1/deals', async (req, res, next) => {
   try {
     const userId = req.user.id;
 
+    const Account = await getAccountModel();
+    const seller = await Account.findOne({ _id: userId });
+
     const Deal = await getDealModel();
     const deal = new Deal({
       title: req.body.title,
@@ -25,6 +28,7 @@ router.post('/v1/deals', async (req, res, next) => {
       description: req.body.description,
       type: req.body.type,
       seller: userId,
+      sellerName: seller.name,
     });
     
     const saved = await deal.save();
@@ -37,6 +41,7 @@ router.post('/v1/deals', async (req, res, next) => {
       description: saved.description,
       type: saved.type,
       seller: saved.seller,
+      sellerName: saved.sellerName,
     } : undefined;
 
     res.json({ result });
@@ -57,7 +62,13 @@ router.patch('/v1/deals/:dealId', async (req, res, next) => {
     if(req.body.price) deal.price = req.body.price;
     if(req.body.description) deal.description = req.body.description;
     if(req.body.type) deal.type = req.body.type;
-    if(req.body.seller) deal.seller = req.body.seller;
+    if(req.body.seller) {
+      const Account = await getAccountModel();
+      const seller = await Account.findOne({ _id: userId });
+      
+      deal.seller = req.body.seller;
+      deal.sellerName = seller.name;
+    }
 
     const Deal = await getDealModel();
     const result = await Deal.updateOne({ _id: dealId }, deal);
@@ -98,9 +109,24 @@ router.get('/v1/deals/:dealId', async (req, res, next) => {
     const Deal = await getDealModel();
     const deal = await Deal.findOne({
       _id: dealId,
-    }).populate('category').populate('chat').populate('seller').exec();
-
+    })
+    .populate('category')
+    .populate('chats')
+    .populate('chats.members')
+    .populate('seller')
+    .exec();
+    console.log(deal.chats)
     // 데이터 가공
+    let chats;
+    for (let chat of deal.chats) {
+      if (!chats) chats = [];
+      chats.push({
+        id: chat._id,
+        title: chat.title,
+        createdAt: chat.createdAt,
+        updatedAt: chat.updatedAt,
+      });
+    }
     const payload = deal ? {
       id: deal._id,
       title: deal.title,
@@ -111,18 +137,15 @@ router.get('/v1/deals/:dealId', async (req, res, next) => {
       price: deal.price,
       description: deal.description,
       type: deal.type,
-      chat: deal.chat ? {
-        id: deal.chat._id,
-        title: deal.chat.title,
-        createdAt: deal.chat.createdAt,
-        updatedAt: deal.chat.updatedAt,
-      } : undefined,
+      chats,
       seller: deal.seller ? {
         id: deal.seller._id,
         accountId: deal.seller.accountId,
         name: deal.seller.name,
         email: deal.seller.email,
+        place: deal.seller.place,
       } : undefined,
+      sellerName: deal.sellerName,
     } : undefined;
 
     res.json({
@@ -157,11 +180,26 @@ router.get('/v1/deals', async (req, res, next) => {
     if (paging) deals = deals.skip(paging.skip).limit(paging.limit);      // 페이징
 
     // 조회
-    deals = await deals.populate('category').populate('chat').populate('seller').exec();
+    deals = await deals
+    .populate('category')
+    .populate('chats')
+    .populate('chats.members')
+    .populate('seller')
+    .exec();
 
     // 데이터 가공
     const payload = [];
     for (let deal of deals) {
+      let chats;
+      for (let chat of deal.chats) {
+        if (!chats) chats = [];
+        chats.push({
+          id: chat._id,
+          title: chat.title,
+          createdAt: chat.createdAt,
+          updatedAt: chat.updatedAt,
+        });
+      }
       payload.push({
         id: deal._id,
         title: deal.title,
@@ -172,18 +210,15 @@ router.get('/v1/deals', async (req, res, next) => {
         price: deal.price,
         description: deal.description,
         type: deal.type,
-        chat: deal.chat ? {
-          id: deal.chat._id,
-          title: deal.chat.title,
-          createdAt: deal.chat.createdAt,
-          updatedAt: deal.chat.updatedAt,
-        } : undefined,
+        chats,
         seller: deal.seller ? {
           id: deal.seller._id,
           accountId: deal.seller.accountId,
           name: deal.seller.name,
           email: deal.seller.email,
+          place: deal.seller.place,
         } : undefined,
+        sellerName: deal.sellerName,
       });
     }
 

@@ -7,6 +7,7 @@ const getAccountModel = require('../models/account');
 const getChatModel = require('../models/chat');
 const getChatContentModel = require('../models/chat-content');
 const getDealModel = require('../models/deal');
+const { Schema } = require('mongoose');
 
 const router = express.Router();
 
@@ -108,13 +109,15 @@ router.get('/v1/chats/:chatId', async (req, res, next) => {
     .populate('contents')
     .exec();
 
-    const members = [];
+    let members;
     for (let member of chat.members) {
+      if (!members) members = [];
       members.push({
         id: member._id,
         accountId: member.accountId,
         name: member.name,
         email: member.email,
+        place: member.place,
       });
     }
     const payload = {
@@ -134,7 +137,9 @@ router.get('/v1/chats/:chatId', async (req, res, next) => {
           accountId: chat.deal.seller.accountId,
           name: chat.deal.seller.name,
           email: chat.deal.seller.email,
+          place: chat.deal.seller.place,
         } : undefined,
+        sellerName: chat.deal.sellerName,
       } : undefined,
       members,
     }
@@ -154,7 +159,14 @@ router.get('/v1/chats/:chatId', async (req, res, next) => {
  */
 router.get('/v1/chats', async (req, res, next) => {
   try {
-    const filter = JSON.parse(req.query.filter || null);
+    const userId = req.user.id;
+
+    const filter = req.query.filter ? JSON.parse(req.query.filter) : {};
+    if (filter.members) {
+      filter.members.$in = userId ;
+    } else {
+      filter.members = { $in: userId };
+    }
     const field = req.query.field || null;
     const keyword = req.query.keyword || null;
     const orders = JSON.parse(req.query.orders || null);
@@ -175,8 +187,9 @@ router.get('/v1/chats', async (req, res, next) => {
 
     const payload = [];
     for (let chat of chats) {
-      const members = [];
+      let members;
       for (let member of chat.members) {
+        if (!members) members = [];
         members.push({
           id: member._id,
           accountId: member.accountId,
@@ -201,7 +214,9 @@ router.get('/v1/chats', async (req, res, next) => {
             accountId: chat.deal.seller.accountId,
             name: chat.deal.seller.name,
             email: chat.deal.seller.email,
+            place: chat.deal.seller.place,
           } : undefined,
+          sellerName: chat.deal.sellerName,
         } : undefined,
         members,
       });
@@ -344,18 +359,19 @@ router.get('/v1/chats/:chatId/contents', async (req, res, next) => {
         content: chatContent.content,
         createdAt: chatContent.createdAt,
         updatedAt: chatContent.updatedAt,
-        account: {
+        account: chatContent.account ? {
           id: chatContent.account._id,
           accountId: chatContent.account.accountId,
           name: chatContent.account.name,
-          email: chatContent.account.email
-        },
-        chat: {
+          email: chatContent.account.email,
+          place: chatContent.account.place,
+        } : undefined,
+        chat: chatContent.chat ? {
           id: chatContent.chat._id,
           title: chatContent.chat.title,
           createdAt: chatContent.chat.createdAt,
           updatedAt: chatContent.chat.updatedAt,
-        },
+        } : undefined,
       });
     }
 
