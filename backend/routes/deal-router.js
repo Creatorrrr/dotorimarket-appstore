@@ -22,13 +22,16 @@ router.post(
     try {
       const userId = req.user.id;
 
+      let reqData = JSON.parse(req.body.deal);
+
       const Deal = await getDealModel();
       const deal = new Deal({
-        title: req.body.title,
-        category: req.body.category,
-        price: req.body.price,
-        description: req.body.description,
-        type: req.body.type,
+        title: reqData.title,
+        category: reqData.category,
+        price: reqData.price,
+        description: reqData.description,
+        files: req.files,
+        type: reqData.type,
         seller: userId,
       });
 
@@ -56,25 +59,43 @@ router.post(
 /**
  * 거래 수정
  */
-router.patch("/v1/deals/:dealId", async (req, res, next) => {
-  try {
-    const dealId = req.params.dealId;
-    const deal = {};
-    if (req.body.title) deal.title = req.body.title;
-    if (req.body.category) deal.categoryId = req.body.category;
-    if (req.body.price) deal.price = req.body.price;
-    if (req.body.description) deal.description = req.body.description;
-    if (req.body.type) deal.type = req.body.type;
-    if (req.body.seller) deal.seller = req.body.seller;
+router.patch(
+  "/v1/deals/:dealId",
+  uploadCfg().fields([{ name: "imgs" }]),
+  async (req, res, next) => {
+    try {
+      const userId = req.user.id;
+      const dealId = req.params.dealId;
+      let reqData = JSON.parse(req.body.deal);
 
-    const Deal = await getDealModel();
-    const result = await Deal.updateOne({ _id: dealId }, deal);
+      const Deal = await getDealModel();
+      const deal = await Deal.findOne({
+        _id: dealId,
+      });
 
-    res.json({ result });
-  } catch (err) {
-    next(err);
+      if (userId.toString() == deal.seller.toString()) {
+        if (reqData.title) deal.title = reqData.title;
+        if (reqData.category) deal.categoryId = reqData.category;
+        if (reqData.price) deal.price = reqData.price;
+        if (reqData.description) deal.description = reqData.description;
+        if (reqData.type) deal.type = reqData.type;
+        if (reqData.seller) deal.seller = reqData.seller;
+        if (req.files.imgs) {
+          deal.files = req.files;
+        }
+
+        const result = await Deal.updateOne({ _id: dealId }, deal);
+
+        res.json({ result });
+      } else {
+        // 자신의 글 아님
+        throw createError("자신의 글이 아닙니다.");
+      }
+    } catch (err) {
+      next(err);
+    }
   }
-});
+);
 
 /**
  * 거래 삭제
@@ -126,6 +147,7 @@ router.get("/v1/deals/:dealId", async (req, res, next) => {
           price: deal.price,
           description: deal.description,
           type: deal.type,
+          files: deal.files,
           chat: deal.chat
             ? {
                 id: deal.chat._id,
@@ -198,6 +220,7 @@ router.get("/v1/deals", async (req, res, next) => {
         price: deal.price,
         description: deal.description,
         type: deal.type,
+        files: deal.files,
         chat: deal.chat
           ? {
               id: deal.chat._id,

@@ -21,6 +21,7 @@ const categoryRouter = require("./routes/category-router");
 const chatRouter = require("./routes/chat-router");
 const wordRouter = require("./routes/word-router");
 const faqRouter = require("./routes/faq-router");
+const bodyParser = require("body-parser");
 
 const getApplicationModel = require("./models/application");
 
@@ -35,10 +36,24 @@ if (!fs.existsSync(uploadDir)) {
 // 미들웨어 등록
 app.use(expressLogger());
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+//app.use(express.urlencoded({ extended: false }));
+app.use(
+  bodyParser.json({
+    limit: "20mb",
+  })
+);
+// for parsing application/x-www-form-urlencoded
+app.use(
+  bodyParser.urlencoded({
+    limit: "20mb",
+    extended: true,
+  })
+);
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
-app.use(fileUpload());
+app.use("/nas", express.static(path.join(__dirname, "upload")));
+
+//app.use(fileUpload());
 app.use(passport.initialize());
 PassportConfig.initPassport();
 app.use(PassportConfig.authenticateJWT);
