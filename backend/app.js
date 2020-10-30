@@ -21,6 +21,8 @@ const categoryRouter = require("./routes/category-router");
 const chatRouter = require("./routes/chat-router");
 const wordRouter = require("./routes/word-router");
 const faqRouter = require("./routes/faq-router");
+const favoritesRouter = require("./routes/favorite-router");
+
 const bodyParser = require("body-parser");
 
 const getApplicationModel = require("./models/application");
@@ -122,7 +124,8 @@ app.use(
   categoryRouter,
   chatRouter,
   wordRouter,
-  faqRouter
+  faqRouter,
+  favoritesRouter
 );
 
 // 라우터에 없는 경로는 404(Not Found)처리

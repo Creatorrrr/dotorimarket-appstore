@@ -17,7 +17,7 @@ const getDealModel = async () => {
         description: String,
         type: String,
         files: Object,
-        favoriteUserList: String, // 관심 등록한 유저 정보
+        favoriteUserList: { type: String, default: "" }, // 관심 등록한 유저 정보
         chat: { type: mongoose.Types.ObjectId, ref: "chat" },
         seller: { type: mongoose.Types.ObjectId, ref: "account" },
       },
