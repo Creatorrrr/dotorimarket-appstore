@@ -6,12 +6,14 @@ const express = require('express');
 const { logger } = require('../configs/logger-config');
 const getAccountModel = require('../models/account');
 
+const { uploadCfg } = require("../configs/upload-config");
+
 const router = express.Router();
 
 /**
  * 계정 생성
  */
-router.post('/v1/accounts', async (req, res, next) => {
+router.post('/v1/accounts', uploadCfg().fields([{ name: "img" }]), async (req, res, next) => {
   try {
     const Account = await getAccountModel();
     const account = new Account({
@@ -20,6 +22,7 @@ router.post('/v1/accounts', async (req, res, next) => {
       name: req.body.password,
       email: req.body.email,
       place: req.body.place,
+      img: req.body.files ? req.body.files.img[0] : undefined,
     });
 
     const result = await account.save();
@@ -34,17 +37,34 @@ router.post('/v1/accounts', async (req, res, next) => {
 /**
  * 계정 수정
  */
-router.patch('/v1/accounts/:accountId', async (req, res, next) => {
+router.patch('/v1/accounts/:accountId', uploadCfg().fields([{ name: "img" }]), async (req, res, next) => {
   try {
+    const reqData = JSON.parse(req.body.account);
+
     const accountId = req.params.accountId;
     const account = {};
-    if (req.body.password) account.password = req.body.password;
-    if (req.body.name) account.name = req.body.name;
-    if (req.body.email) account.email = req.body.email;
-    if (req.body.place) account.place = req.body.place;
+    if (reqData.password) account.password = reqData.password;
+    if (reqData.name) account.name = reqData.name;
+    if (reqData.email) account.email = reqData.email;
+    if (reqData.place) account.place = reqData.place;
+    if (req.files) account.img = req.files.img[0];
 
     const Account = await getAccountModel();
-    const result = await Account.updateOne({ _id: accountId }, account);
+    await Account.updateOne({ _id: accountId }, account);
+
+    const found = await Account.findOne({
+      _id: accountId,
+    });
+
+    const result = {
+      id: found._id,
+      accountId: found.accountId,
+      password: found.password,
+      name: found.name,
+      email: found.email,
+      place: found.place,
+      img: found.img,
+    };
 
     res.json({ result });
   } catch(err) {

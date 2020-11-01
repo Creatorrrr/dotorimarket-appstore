@@ -7,6 +7,7 @@ const getAccountModel = require('../models/account');
 const getChatModel = require('../models/chat');
 const getChatContentModel = require('../models/chat-content');
 const getDealModel = require('../models/deal');
+const getCategoryModel = require('../models/category');
 const { Schema } = require('mongoose');
 
 const router = express.Router();
@@ -56,6 +57,8 @@ router.patch('/v1/chats/:chatId', async (req, res, next) => {
     const chat = {};
     if (req.body.title) chat.title = req.body.title;
     if (req.body.deal) chat.title = req.body.deal;
+
+    // 지워도 될 것 같음...
     if (req.body.members || req.body.contents) {
       chat.$push = {};
       if (req.body.members) chat.$push.members = req.body.members;
@@ -104,6 +107,7 @@ router.get('/v1/chats/:chatId', async (req, res, next) => {
       _id: chatId,
     })
     .populate('deal')
+    .populate('deal.category')
     .populate('deal.seller')
     .populate('members')
     .populate('contents')
@@ -118,6 +122,7 @@ router.get('/v1/chats/:chatId', async (req, res, next) => {
         name: member.name,
         email: member.email,
         place: member.place,
+        img: member.img,
       });
     }
     const payload = {
@@ -128,7 +133,10 @@ router.get('/v1/chats/:chatId', async (req, res, next) => {
       deal: chat.deal ? {
         id: chat.deal._id,
         title: chat.deal.title,
-        categoryId: chat.deal.categoryId,
+        category: chat.deal.category ? {
+          id: chat.deal.category._id,
+          name: chat.deal.category.name,
+        } : undefined,
         price: chat.deal.price,
         description: chat.deal.description,
         type: chat.deal.type,
@@ -138,6 +146,7 @@ router.get('/v1/chats/:chatId', async (req, res, next) => {
           name: chat.deal.seller.name,
           email: chat.deal.seller.email,
           place: chat.deal.seller.place,
+          img: chat.deal.seller.img,
         } : undefined,
         sellerName: chat.deal.sellerName,
       } : undefined,
@@ -174,7 +183,8 @@ router.get('/v1/chats', async (req, res, next) => {
 
     // 조회 조건 적용
     await getDealModel();
-    await getAccountModel();
+    const Account = await getAccountModel();
+    const Category = await getCategoryModel();
     await getChatContentModel();
     const Chat = await getChatModel();
     let chats = Chat.find( filter );                                      // 필터
@@ -183,7 +193,11 @@ router.get('/v1/chats', async (req, res, next) => {
     if (paging) chats = chats.skip(paging.skip).limit(paging.limit);      // 페이징
 
     // 조회
-    chats = await chats.populate('deal').populate('members').populate('contents').exec();
+    chats = await chats
+    .populate('deal')
+    .populate('members')
+    .populate('contents')
+    .exec();
 
     const payload = [];
     for (let chat of chats) {
@@ -195,8 +209,12 @@ router.get('/v1/chats', async (req, res, next) => {
           accountId: member.accountId,
           name: member.name,
           email: member.email,
+          place: member.place,
+          img: member.img,
         });
       }
+      const category = await Category.findOne({ _id: chat.deal.category });
+      const seller = await Account.findOne({ _id: chat.deal.seller });
       payload.push({
         id: chat.id,
         title: chat.title,
@@ -205,16 +223,20 @@ router.get('/v1/chats', async (req, res, next) => {
         deal: chat.deal ? {
           id: chat.deal._id,
           title: chat.deal.title,
-          categoryId: chat.deal.categoryId,
+          category: category ? {
+            id: category._id,
+            name: category.name,
+          } : undefined,
           price: chat.deal.price,
           description: chat.deal.description,
           type: chat.deal.type,
-          seller: chat.deal.seller ? {
-            id: chat.deal.seller._id,
-            accountId: chat.deal.seller.accountId,
-            name: chat.deal.seller.name,
-            email: chat.deal.seller.email,
-            place: chat.deal.seller.place,
+          seller: seller ? {
+            id: seller._id,
+            accountId: seller.accountId,
+            name: seller.name,
+            email: seller.email,
+            place: seller.place,
+            img: seller.img,
           } : undefined,
           sellerName: chat.deal.sellerName,
         } : undefined,
@@ -365,6 +387,7 @@ router.get('/v1/chats/:chatId/contents', async (req, res, next) => {
           name: chatContent.account.name,
           email: chatContent.account.email,
           place: chatContent.account.place,
+          img: chatContent.account.img,
         } : undefined,
         chat: chatContent.chat ? {
           id: chatContent.chat._id,
