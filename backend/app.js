@@ -53,7 +53,7 @@ app.use(
 );
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
-app.use("/upload", express.static(path.join(__dirname, "upload")));
+app.use("/upload", express.static(path.join(__dirname, "../files")));
 
 //app.use(fileUpload());
 app.use(passport.initialize());
