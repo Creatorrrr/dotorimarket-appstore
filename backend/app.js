@@ -10,6 +10,7 @@ const fileUpload = require("express-fileupload");
 const { logger, expressLogger } = require("./configs/logger-config");
 const PassportConfig = require("./configs/passport-config");
 const HttpConfig = require("./configs/http-config");
+const FileConfig = require("./configs/file-config");
 
 const applicationRouter = require("./routes/application-router");
 const userRouter = require("./routes/user-router");
@@ -53,7 +54,7 @@ app.use(
 );
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
-app.use("/upload", express.static(path.join(__dirname, "../files")));
+app.use("/upload", express.static(path.join(__dirname, FileConfig.FILE_PATH)));
 
 //app.use(fileUpload());
 app.use(passport.initialize());
