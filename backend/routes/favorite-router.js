@@ -60,9 +60,6 @@ router.get("/v1/favorites", async (req, res, next) => {
 
     let list = await Deal.find(findOPtion);
 
-    const result = {};
-    result.msg = "잘됨";
-    result.list = list;
     res.json({
       statusCode: HttpConfig.OK.statusCode,
       message: HttpConfig.OK.message,
