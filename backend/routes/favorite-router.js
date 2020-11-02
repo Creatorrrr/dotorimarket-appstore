@@ -47,4 +47,30 @@ router.post("/v1/favorites", async (req, res, next) => {
   }
 });
 
+// 좋아요 리스트 표시
+router.get("/v1/favorites", async (req, res, next) => {
+  console.log("favorite list");
+  try {
+    const userId = req.user.id;
+
+    const Deal = await getDealModel();
+    const findOPtion = {
+      favoriteUserList: { $regex: userId + favoriteDIV },
+    };
+
+    let list = await Deal.find(findOPtion);
+
+    const result = {};
+    result.msg = "잘됨";
+    result.list = list;
+    res.json({
+      statusCode: HttpConfig.OK.statusCode,
+      message: HttpConfig.OK.message,
+      list: list,
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
 module.exports = router;
