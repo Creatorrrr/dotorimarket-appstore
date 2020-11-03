@@ -3,7 +3,11 @@
 const createError = require("http-errors");
 const HttpConfig = require("../configs/http-config");
 const express = require("express");
+
+const getCategoryModel = require("../models/category");
+const getAccountModel = require("../models/account");
 const getDealModel = require("../models/deal");
+const getChatModel = require("../models/chat");
 
 const router = express.Router();
 
@@ -58,7 +62,15 @@ router.get("/v1/favorites", async (req, res, next) => {
       favoriteUserList: { $regex: userId + favoriteDIV },
     };
 
-    let list = await Deal.find(findOPtion);
+    await getCategoryModel();
+    await getChatModel();
+    await getAccountModel();
+
+    let list = await Deal.find(findOPtion)
+      .populate("category")
+      .populate("chat")
+      .populate("seller")
+      .exec();
 
     res.json({
       statusCode: HttpConfig.OK.statusCode,
