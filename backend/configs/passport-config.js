@@ -105,6 +105,14 @@ PassportConfig.IGNORE_PATHS = [
     pattern: /^\/upload\/(.*)$/,
     method: "GET",
   },
+  {
+    pattern: /^\/api\/mobile\/v[0-9]+\/accounts$/,
+    method: "POST",
+  },
+  {
+    pattern: /^\/api\/mobile\/v[0-9]+\/words\/random$/,
+    method: "GET",
+  },
 ];
 
 // JWT_SECRET이 초기화 안 되어 있을 경우 에러 발생

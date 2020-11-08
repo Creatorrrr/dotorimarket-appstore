@@ -3,6 +3,7 @@
 const createError = require('http-errors');
 const HttpConfig = require('../configs/http-config');
 const express = require('express');
+const sharp = require("sharp");
 const { logger } = require('../configs/logger-config');
 const getAccountModel = require('../models/account');
 
@@ -15,14 +16,31 @@ const router = express.Router();
  */
 router.post('/v1/accounts', uploadCfg().fields([{ name: "img" }]), async (req, res, next) => {
   try {
+    let reqData = JSON.parse(req.body.account);
+
+    // 섬네일 생성
+    let thumbnail;
+    if (req.files) {
+      const img = req.files.img[0];
+      const filename = `thumb_${img.filename}`;
+      const path = `${img.destination}${filename}`;
+      const description = await sharp(img.path).resize(200).toFile(`${img.destination}thumb_${img.filename}`);
+      thumbnail = {
+        filename,
+        path,
+        description,
+      };
+    }
+
     const Account = await getAccountModel();
     const account = new Account({
-      accountId: req.body.accountId,
-      password: req.body.password,
-      name: req.body.password,
-      email: req.body.email,
-      place: req.body.place,
-      img: req.body.files ? req.body.files.img[0] : undefined,
+      accountId: reqData.accountId,
+      password: reqData.password,
+      name: reqData.password,
+      email: reqData.email,
+      place: reqData.place,
+      img: req.files ? req.files.img[0] : undefined,
+      thumbnail: thumbnail,
     });
 
     const result = await account.save();
@@ -41,6 +59,20 @@ router.patch('/v1/accounts/:accountId', uploadCfg().fields([{ name: "img" }]), a
   try {
     const reqData = JSON.parse(req.body.account);
 
+    // 섬네일 생성
+    let thumbnail;
+    if (req.files) {
+      const img = req.files.img[0];
+      const filename = `thumb_${img.filename}`;
+      const path = `${img.destination}${filename}`;
+      const description = await sharp(img.path).resize(200).toFile(`${img.destination}thumb_${img.filename}`);
+      thumbnail = {
+        filename,
+        path,
+        description,
+      };
+    }
+
     const accountId = req.params.accountId;
     const account = {};
     if (reqData.password) account.password = reqData.password;
@@ -48,6 +80,7 @@ router.patch('/v1/accounts/:accountId', uploadCfg().fields([{ name: "img" }]), a
     if (reqData.email) account.email = reqData.email;
     if (reqData.place) account.place = reqData.place;
     if (req.files) account.img = req.files.img[0];
+    if (thumbnail) account.thumbnail = thumbnail;
 
     const Account = await getAccountModel();
     await Account.updateOne({ _id: accountId }, account);
@@ -108,6 +141,8 @@ router.get('/v1/accounts/:accountId', async (req, res, next) => {
       name: account.name,
       email: account.email,
       place: account.place,
+      img: account.img,
+      thumbnail: account.thumbnail,
     } : undefined;
 
     res.json({
@@ -150,6 +185,8 @@ router.get('/v1/accounts', async (req, res, next) => {
         name: account.name,
         email: account.email,
         place: account.place,
+        img: account.img,
+        thumbnail: account.thumbnail,
       });
     }
 

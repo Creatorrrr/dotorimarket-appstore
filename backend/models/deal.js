@@ -17,6 +17,7 @@ const getDealModel = async () => {
         description: String,
         status: String, // S: 판매중, R: 판매예약, F: 판매완료
         imgs: [Object],
+        thumbnails: [Object],
         favoriteUserList: { type: String, default: "" }, // 관심 등록한 유저 정보
         chats: [{ type: mongoose.Types.ObjectId, ref: 'chat' }],
         seller: { type: mongoose.Types.ObjectId, ref: "account" },

@@ -37,6 +37,7 @@ router.post("/v1/users", async (req, res, next) => {
           email: account.email,
           place: account.place,
           img: account.img,
+          thumbnail: account.thumbnail,
         },
         token,
       };

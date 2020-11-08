@@ -3,6 +3,7 @@
 const createError = require("http-errors");
 const HttpConfig = require("../configs/http-config");
 const express = require("express");
+const sharp = require("sharp");
 const getCategoryModel = require("../models/category");
 const getAccountModel = require("../models/account");
 const getDealModel = require("../models/deal");
@@ -27,6 +28,21 @@ router.post(
 
       let reqData = JSON.parse(req.body.deal);
 
+      // 섬네일 생성
+      const thumbnails = [];
+      if (req.files && req.files.imgs) {
+        for (let img of req.files.imgs) {
+          const filename = `thumb_${img.filename}`;
+          const path = `${img.destination}${filename}`;
+          const description = await sharp(img.path).resize(200).toFile(`${img.destination}thumb_${img.filename}`);
+          thumbnails.push({
+            filename,
+            path,
+            description,
+          });
+        }
+      }
+
       const Deal = await getDealModel();
       const deal = new Deal({
         title: reqData.title,
@@ -34,6 +50,7 @@ router.post(
         price: reqData.price,
         description: reqData.description,
         imgs: req.files && req.files.imgs ? req.files.imgs : undefined,
+        thumbnails: thumbnails.length > 0 ? thumbnails : undefined,
         status: 'S',
         seller: userId,
         sellerName: seller.name,
@@ -78,6 +95,21 @@ router.patch(
         _id: dealId,
       });
 
+      // 섬네일 생성
+      const thumbnails = [];
+      if (req.files && req.files.imgs) {
+        for (let img of req.files.imgs) {
+          const filename = `thumb_${img.filename}`;
+          const path = `${img.destination}${filename}`;
+          const description = await sharp(img.path).resize(200).toFile(`${img.destination}thumb_${img.filename}`);
+          thumbnails.push({
+            filename,
+            path,
+            description,
+          });
+        }
+      }
+
       if (userId.toString() == deal.seller.toString()) {
         if (reqData.title) deal.title = reqData.title;
         if (reqData.category) deal.categoryId = reqData.category;
@@ -93,6 +125,9 @@ router.patch(
         }
         if (req.files && req.files.imgs) {
           deal.imgs = req.files.imgs;
+        }
+        if (thumbnails.length > 0) {
+          deal.thumbnails = thumbnails;
         }
 
         const result = await Deal.updateOne({ _id: dealId }, deal);
@@ -170,6 +205,7 @@ router.get("/v1/deals/:dealId", async (req, res, next) => {
           description: deal.description,
           status: deal.status,
           imgs: deal.imgs,
+          thumbnails: deal.thumbnails,
           chats,
           seller: deal.seller
             ? {
@@ -177,6 +213,9 @@ router.get("/v1/deals/:dealId", async (req, res, next) => {
                 accountId: deal.seller.accountId,
                 name: deal.seller.name,
                 email: deal.seller.email,
+                place: deal.seller.place,
+                img: deal.seller.img,
+                thumbnail: deal.seller.thumbnail,
               }
             : undefined,
           sellerName: deal.sellerName,
@@ -248,6 +287,7 @@ router.get("/v1/deals", async (req, res, next) => {
         description: deal.description,
         status: deal.status,
         imgs: deal.imgs,
+        thumbnails: deal.thumbnails,
         chats,
         seller: deal.seller
           ? {
@@ -255,6 +295,9 @@ router.get("/v1/deals", async (req, res, next) => {
               accountId: deal.seller.accountId,
               name: deal.seller.name,
               email: deal.seller.email,
+              place: deal.seller.place,
+              img: deal.seller.img,
+              thumbnail: deal.seller.thumbnail,
             }
           : undefined,
         sellerName: deal.sellerName,

@@ -123,6 +123,7 @@ router.get('/v1/chats/:chatId', async (req, res, next) => {
         email: member.email,
         place: member.place,
         img: member.img,
+        thumbnail: member.thumbnail,
       });
     }
     const payload = {
@@ -147,6 +148,7 @@ router.get('/v1/chats/:chatId', async (req, res, next) => {
           email: chat.deal.seller.email,
           place: chat.deal.seller.place,
           img: chat.deal.seller.img,
+          thumbnail: chat.deal.seller.thumbnail,
         } : undefined,
         sellerName: chat.deal.sellerName,
       } : undefined,
@@ -211,6 +213,7 @@ router.get('/v1/chats', async (req, res, next) => {
           email: member.email,
           place: member.place,
           img: member.img,
+          thumbnail: member.thumbnail,
         });
       }
       const category = await Category.findOne({ _id: chat.deal.category });
@@ -237,6 +240,7 @@ router.get('/v1/chats', async (req, res, next) => {
             email: seller.email,
             place: seller.place,
             img: seller.img,
+            thumbnail: seller.thumbnail,
           } : undefined,
           sellerName: chat.deal.sellerName,
         } : undefined,
@@ -388,6 +392,7 @@ router.get('/v1/chats/:chatId/contents', async (req, res, next) => {
           email: chatContent.account.email,
           place: chatContent.account.place,
           img: chatContent.account.img,
+          thumbnail: chatContent.account.thumbnail,
         } : undefined,
         chat: chatContent.chat ? {
           id: chatContent.chat._id,
