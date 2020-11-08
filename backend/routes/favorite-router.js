@@ -3,7 +3,11 @@
 const createError = require("http-errors");
 const HttpConfig = require("../configs/http-config");
 const express = require("express");
+
+const getCategoryModel = require("../models/category");
+const getAccountModel = require("../models/account");
 const getDealModel = require("../models/deal");
+const getChatModel = require("../models/chat");
 
 const router = express.Router();
 
@@ -42,6 +46,37 @@ router.post("/v1/favorites", async (req, res, next) => {
     deal.save();
 
     res.json({ result });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// 좋아요 리스트 표시
+router.get("/v1/favorites", async (req, res, next) => {
+  console.log("favorite list");
+  try {
+    const userId = req.user.id;
+
+    const Deal = await getDealModel();
+    const findOPtion = {
+      favoriteUserList: { $regex: userId + favoriteDIV },
+    };
+
+    await getCategoryModel();
+    await getChatModel();
+    await getAccountModel();
+
+    let list = await Deal.find(findOPtion)
+      .populate("category")
+      .populate("chat")
+      .populate("seller")
+      .exec();
+
+    res.json({
+      statusCode: HttpConfig.OK.statusCode,
+      message: HttpConfig.OK.message,
+      list: list,
+    });
   } catch (err) {
     next(err);
   }
