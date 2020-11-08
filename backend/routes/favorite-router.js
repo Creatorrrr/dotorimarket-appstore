@@ -3,7 +3,11 @@
 const createError = require("http-errors");
 const HttpConfig = require("../configs/http-config");
 const express = require("express");
+
+const getCategoryModel = require("../models/category");
+const getAccountModel = require("../models/account");
 const getDealModel = require("../models/deal");
+const getChatModel = require("../models/chat");
 
 const router = express.Router();
 
@@ -42,6 +46,76 @@ router.post("/v1/favorites", async (req, res, next) => {
     deal.save();
 
     res.json({ result });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// 좋아요 리스트 표시
+router.get("/v1/favorites", async (req, res, next) => {
+  console.log("favorite list");
+  try {
+    const userId = req.user.id;
+
+    const Deal = await getDealModel();
+    const findOPtion = {
+      favoriteUserList: { $regex: userId + favoriteDIV },
+    };
+
+    await getCategoryModel();
+    await getChatModel();
+    await getAccountModel();
+
+    let deals = await Deal.find(findOPtion)
+      .populate("category")
+      .populate("chat")
+      .populate("seller")
+      .exec();
+
+    // 데이터 가공
+    const payload = [];
+    for (let deal of deals) {
+      let chats;
+      for (let chat of deal.chats) {
+        if (!chats) chats = [];
+        chats.push({
+          id: chat._id,
+          title: chat.title,
+          createdAt: chat.createdAt,
+          updatedAt: chat.updatedAt,
+        });
+      }
+      payload.push({
+        id: deal._id,
+        title: deal.title,
+        category: deal.category
+          ? {
+              id: deal.category._id,
+              name: deal.category.name,
+            }
+          : undefined,
+        price: deal.price,
+        description: deal.description,
+        status: deal.status,
+        imgs: deal.imgs,
+        chats,
+        seller: deal.seller
+          ? {
+              id: deal.seller._id,
+              accountId: deal.seller.accountId,
+              name: deal.seller.name,
+              email: deal.seller.email,
+            }
+          : undefined,
+        sellerName: deal.sellerName,
+      });
+    }
+
+    res.json({
+      statusCode: HttpConfig.OK.statusCode,
+      message: HttpConfig.OK.message,
+      result: payload,
+    });
   } catch (err) {
     next(err);
   }

@@ -191,6 +191,13 @@ router.get("/v1/deals/:dealId", async (req, res, next) => {
         updatedAt: chat.updatedAt,
       });
     }
+
+    let favorite = false;
+    if (deal.favoriteUserList) {
+      const favoriteUserList = deal.favoriteUserList.split('<<');
+      if (favoriteUserList.find(item => item.toString() == req.user.id.toString())) favorite = true;
+    }
+
     const payload = deal
       ? {
           id: deal._id,
@@ -219,6 +226,7 @@ router.get("/v1/deals/:dealId", async (req, res, next) => {
               }
             : undefined,
           sellerName: deal.sellerName,
+          favorite,
         }
       : undefined;
 
@@ -274,6 +282,14 @@ router.get("/v1/deals", async (req, res, next) => {
           updatedAt: chat.updatedAt,
         });
       }
+      console.log(deal.favoriteUserList)
+
+      let favorite = false;
+      if (deal.favoriteUserList) {
+        const favoriteUserList = deal.favoriteUserList.split('<<');
+        if (favoriteUserList.find(item => item.toString() == req.user.id.toString())) favorite = true;
+      }
+      
       payload.push({
         id: deal._id,
         title: deal.title,
@@ -300,7 +316,7 @@ router.get("/v1/deals", async (req, res, next) => {
               thumbnail: deal.seller.thumbnail,
             }
           : undefined,
-        sellerName: deal.sellerName,
+        favorite,
       });
     }
 
