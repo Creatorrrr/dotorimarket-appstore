@@ -66,16 +66,55 @@ router.get("/v1/favorites", async (req, res, next) => {
     await getChatModel();
     await getAccountModel();
 
-    let list = await Deal.find(findOPtion)
+    let deals = await Deal.find(findOPtion)
       .populate("category")
       .populate("chat")
       .populate("seller")
       .exec();
 
+    // 데이터 가공
+    const payload = [];
+    for (let deal of deals) {
+      let chats;
+      for (let chat of deal.chats) {
+        if (!chats) chats = [];
+        chats.push({
+          id: chat._id,
+          title: chat.title,
+          createdAt: chat.createdAt,
+          updatedAt: chat.updatedAt,
+        });
+      }
+      payload.push({
+        id: deal._id,
+        title: deal.title,
+        category: deal.category
+          ? {
+              id: deal.category._id,
+              name: deal.category.name,
+            }
+          : undefined,
+        price: deal.price,
+        description: deal.description,
+        status: deal.status,
+        imgs: deal.imgs,
+        chats,
+        seller: deal.seller
+          ? {
+              id: deal.seller._id,
+              accountId: deal.seller.accountId,
+              name: deal.seller.name,
+              email: deal.seller.email,
+            }
+          : undefined,
+        sellerName: deal.sellerName,
+      });
+    }
+
     res.json({
       statusCode: HttpConfig.OK.statusCode,
       message: HttpConfig.OK.message,
-      list: list,
+      result: payload,
     });
   } catch (err) {
     next(err);
