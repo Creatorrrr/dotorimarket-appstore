@@ -34,7 +34,11 @@ router.post(
         for (let img of req.files.imgs) {
           const filename = `thumb_${img.filename}`;
           const path = `${img.destination}${filename}`;
-          const description = await sharp(img.path).resize(300).toFile(`${img.destination}thumb_${img.filename}`);
+          const description = await sharp(img.path)
+          .resize(300)
+          .withMetadata()
+          .toFile(`${img.destination}thumb_${img.filename}`);
+
           thumbnails.push({
             filename,
             path,
@@ -101,7 +105,11 @@ router.patch(
         for (let img of req.files.imgs) {
           const filename = `thumb_${img.filename}`;
           const path = `${img.destination}${filename}`;
-          const description = await sharp(img.path).resize(300).toFile(`${img.destination}thumb_${img.filename}`);
+          const description = await sharp(img.path)
+          .resize(300)
+          .withMetadata()
+          .toFile(`${img.destination}thumb_${img.filename}`);
+          
           thumbnails.push({
             filename,
             path,

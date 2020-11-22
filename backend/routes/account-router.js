@@ -24,7 +24,11 @@ router.post('/v1/accounts', uploadCfg().fields([{ name: "img" }]), async (req, r
       const img = req.files.img[0];
       const filename = `thumb_${img.filename}`;
       const path = `${img.destination}${filename}`;
-      const description = await sharp(img.path).resize(200).toFile(`${img.destination}thumb_${img.filename}`);
+      const description = await sharp(img.path)
+      .resize(300)
+      .withMetadata()
+      .toFile(`${img.destination}thumb_${img.filename}`);
+
       thumbnail = {
         filename,
         path,
@@ -65,7 +69,11 @@ router.patch('/v1/accounts/:accountId', uploadCfg().fields([{ name: "img" }]), a
       const img = req.files.img[0];
       const filename = `thumb_${img.filename}`;
       const path = `${img.destination}${filename}`;
-      const description = await sharp(img.path).resize(200).toFile(`${img.destination}thumb_${img.filename}`);
+      const description = await sharp(img.path)
+      .resize(300)
+      .withMetadata()
+      .toFile(`${img.destination}thumb_${img.filename}`);
+
       thumbnail = {
         filename,
         path,
