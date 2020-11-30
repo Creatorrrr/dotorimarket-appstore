@@ -290,7 +290,6 @@ router.get("/v1/deals", async (req, res, next) => {
           updatedAt: chat.updatedAt,
         });
       }
-      console.log(deal.favoriteUserList)
 
       let favorite = false;
       if (deal.favoriteUserList) {

@@ -15,8 +15,6 @@ const router = express.Router();
 const favoriteDIV = "<<";
 
 router.post("/v1/favorites", async (req, res, next) => {
-  console.log("favorite update");
-  console.log("favorite update - favoriteId = " + req.body.dealId);
   const result = {};
   try {
     const userId = req.user.id;
@@ -53,7 +51,6 @@ router.post("/v1/favorites", async (req, res, next) => {
 
 // 좋아요 리스트 표시
 router.get("/v1/favorites", async (req, res, next) => {
-  console.log("favorite list");
   try {
     const userId = req.user.id;
 
