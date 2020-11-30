@@ -20,7 +20,7 @@ router.post('/v1/accounts', uploadCfg().fields([{ name: "img" }]), async (req, r
 
     // 섬네일 생성
     let thumbnail;
-    if (req.files) {
+    if (req.files && req.files.img[0]) {
       const img = req.files.img[0];
       const filename = `thumb_${img.filename}`;
       const path = `${img.destination}${filename}`;
@@ -43,7 +43,7 @@ router.post('/v1/accounts', uploadCfg().fields([{ name: "img" }]), async (req, r
       name: reqData.password,
       email: reqData.email,
       place: reqData.place,
-      img: req.files ? req.files.img[0] : undefined,
+      img: req.files && req.files.img[0] ? req.files.img[0] : undefined,
       thumbnail: thumbnail,
     });
 
@@ -65,7 +65,7 @@ router.patch('/v1/accounts/:accountId', uploadCfg().fields([{ name: "img" }]), a
 
     // 섬네일 생성
     let thumbnail;
-    if (req.files) {
+    if (req.files && req.files.img[0]) {
       const img = req.files.img[0];
       const filename = `thumb_${img.filename}`;
       const path = `${img.destination}${filename}`;
@@ -87,7 +87,7 @@ router.patch('/v1/accounts/:accountId', uploadCfg().fields([{ name: "img" }]), a
     if (reqData.name) account.name = reqData.name;
     if (reqData.email) account.email = reqData.email;
     if (reqData.place) account.place = reqData.place;
-    if (req.files) account.img = req.files.img[0];
+    if (req.files && req.files.img[0]) account.img = req.files.img[0];
     if (thumbnail) account.thumbnail = thumbnail;
 
     const Account = await getAccountModel();
